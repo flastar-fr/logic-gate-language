@@ -3,7 +3,7 @@ set_languages("c++17")
 
 add_requires("gtest 1.16", {configs = {main = false}, system = false})
 
-target("circuit-descriptor-language")
+target("logic-gate-language")
     set_kind("binary")
     add_files("src/*.cpp")
 
