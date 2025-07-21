@@ -5,7 +5,7 @@ add_requires("gtest 1.16", {configs = {main = false}, system = false})
 
 target("logic-gate-language")
     set_kind("binary")
-    add_files("src/*.cpp")
+    add_files("src/**.cpp")
 
 target("tests")
     set_kind("binary")
