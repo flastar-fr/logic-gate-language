@@ -4,6 +4,8 @@
 
 CSRGraph::CSRGraph(Graph graph) {
     const auto& nodes = graph.get_nodes();
+    offsets.reserve(nodes.size());
+    edges.reserve(nodes.size() * 2);
 
     offsets.emplace_back(0);
     for (const auto& node : nodes) {
