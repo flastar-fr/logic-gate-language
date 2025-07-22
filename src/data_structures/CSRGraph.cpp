@@ -6,9 +6,11 @@ CSRGraph::CSRGraph(Graph graph) {
     const auto& nodes = graph.get_nodes();
     offsets.reserve(nodes.size());
     edges.reserve(nodes.size() * 2);
+    csrnodes.reserve(nodes.size());
 
     offsets.emplace_back(0);
     for (const auto& node : nodes) {
+        csrnodes.emplace_back(node);
         const auto& adjacents = node.adjacents;
         for (const auto& adjacent : adjacents) {
             edges.emplace_back(adjacent);
@@ -25,8 +27,16 @@ void CSRGraph::print_graph() const noexcept {
         const auto offset = offsets[i];
         const auto offset_sup = offsets[i + 1];
         for (size_t j = offset; j < offset_sup; ++j) {
-            std::cout << edges[j].index << " ";
+            std::cout << edges[j].id << " ";
         }
         std::cout << std::endl;
     }
+}
+
+void CSRGraph::process() {
+    // TODO : execute from inputs
+}
+
+void CSRGraph::print_process() const noexcept {
+    // TODO : print outputs
 }
