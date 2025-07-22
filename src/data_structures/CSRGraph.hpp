@@ -12,12 +12,14 @@ public:
     void print_graph() const noexcept;
     void process();
     void print_process() const noexcept;
-    [[nodiscard]] NeighborRange<CSRNode> get_adjacent_neighbors(const CSRNode& node) const noexcept;
-    [[nodiscard]] std::vector<CSRNode>& get_edges() noexcept { return edges; }
+    [[nodiscard]] NeighborRange<size_t> get_adjacent_neighbors(const CSRNode& node) noexcept;
+    [[nodiscard]] std::vector<size_t>& get_edges() noexcept { return edges; }
     [[nodiscard]] std::vector<size_t>& get_offsets() noexcept { return offsets; }
 
 private:
-    std::vector<CSRNode> edges;
+    std::vector<size_t> edges;
     std::vector<size_t> offsets;
-    std::vector<CSRNode> csrnodes;
+    std::vector<CSRNode> csr_nodes;
+    std::vector<CSRNode*> inputs;  // TODO : store inputs as size_t to csr_nodes
+    std::vector<CSRNode*> outputs;  // TODO : store outputs as size_t to csr_nodes
 };

@@ -7,14 +7,22 @@ int main() {
     std::cout << "Graph" << std::endl;
     auto node0 = Node(0, NodeType::INPUT);
     node0.state = true;
-    auto node1 = Node(1, NodeType::OUTPUT);
-    auto graph = Graph(2);
+    auto node1 = Node(1, NodeType::NODE_WIRE);
+    auto node2 = Node(2, NodeType::OUTPUT);
+    auto graph = Graph(0);
     graph.add_edge(node0, node1);
+    graph.add_edge(node1, node2);
     graph.print_graph();
 
+    std::cout << std::endl;
     std::cout << "Graph CSR" << std::endl;
-    const auto graph_csr = CSRGraph(graph);
+    auto graph_csr = CSRGraph(graph);
     graph_csr.print_graph();
+
+    std::cout << std::endl;
+    std::cout << "Result" << std::endl;
+    graph_csr.process();
+    graph_csr.print_process();
 
     return 0;
 }

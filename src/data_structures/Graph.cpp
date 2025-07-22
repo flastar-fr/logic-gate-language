@@ -11,6 +11,10 @@ void Graph::add_edge(const Node& from, Node& to) {
         nodes.resize(from.index + 1);
         nodes[from.index] = from;
     }
+    if (nodes.size() <= to.index) {
+        nodes.resize(to.index + 1);
+        nodes[to.index] = to;
+    }
     nodes[from.index].neighbors.emplace_back(to);
 }
 
