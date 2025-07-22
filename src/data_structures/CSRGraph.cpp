@@ -11,12 +11,12 @@ CSRGraph::CSRGraph(Graph graph) {
     offsets.emplace_back(0);
     for (const auto& node : nodes) {
         csrnodes.emplace_back(node);
-        const auto& adjacents = node.adjacents;
-        for (const auto& adjacent : adjacents) {
-            edges.emplace_back(adjacent);
+        const auto& neighbors = node.neighbors;
+        for (const auto& neighbor : neighbors) {
+            edges.emplace_back(neighbor);
         }
 
-        const size_t offset = offsets[offsets.size() - 1] + adjacents.size();
+        const size_t offset = offsets[offsets.size() - 1] + neighbors.size();
         offsets.emplace_back(offset);
     }
 }
