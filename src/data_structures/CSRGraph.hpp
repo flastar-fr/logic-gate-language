@@ -3,6 +3,7 @@
 
 #include "CSRNode.hpp"
 #include "Graph.hpp"
+#include "NeighborRange.hpp"
 
 class CSRGraph {
 public:
@@ -11,6 +12,7 @@ public:
     void print_graph() const noexcept;
     void process();
     void print_process() const noexcept;
+    [[nodiscard]] NeighborRange<CSRNode> get_adjacent_neighbors(const CSRNode& node) const noexcept;
     [[nodiscard]] std::vector<CSRNode>& get_edges() noexcept { return edges; }
     [[nodiscard]] std::vector<size_t>& get_offsets() noexcept { return offsets; }
 

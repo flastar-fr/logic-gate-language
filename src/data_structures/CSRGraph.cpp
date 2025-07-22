@@ -40,3 +40,7 @@ void CSRGraph::process() {
 void CSRGraph::print_process() const noexcept {
     // TODO : print outputs
 }
+
+NeighborRange<CSRNode> CSRGraph::get_adjacent_neighbors(const CSRNode& node) const noexcept {
+    return NeighborRange(&edges[offsets[node.id]], &edges[offsets[node.id + 1]]);
+}
