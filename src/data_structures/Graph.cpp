@@ -6,12 +6,12 @@ Graph::Graph(const int size) {
     nodes.reserve(size);
 }
 
-void Graph::add_node(const Node& node) {
-    nodes.emplace_back(node);
-}
-
-void Graph::add_edge(const size_t from, Node& to) {
-    nodes[from].adjacents.emplace_back(to);
+void Graph::add_edge(const Node& from, Node& to) {
+    if (nodes.size() <= from.index) {
+        nodes.resize(from.index + 1);
+        nodes[from.index] = from;
+    }
+    nodes[from.index].adjacents.emplace_back(to);
 }
 
 void Graph::print_graph() const {
