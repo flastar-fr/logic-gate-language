@@ -2,9 +2,15 @@
 
 #include <iostream>
 
-Graph::Graph(const int size) : nodes(size) {}
+Graph::Graph(const int size) {
+    nodes.reserve(size);
+}
 
-void Graph::add_edge(const size_t from, const size_t to) {
+void Graph::add_node(const Node& node) {
+    nodes.emplace_back(node);
+}
+
+void Graph::add_edge(const size_t from, Node& to) {
     nodes[from].adjacents.emplace_back(to);
 }
 
@@ -14,6 +20,6 @@ void Graph::print_graph() const {
         for (const auto& neighbor : nodes[i].adjacents) {
             std::cout << neighbor.index << " ";
         }
-        std::cout << "\n";
+        std::cout << std::endl;
     }
 }
