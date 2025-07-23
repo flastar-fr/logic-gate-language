@@ -53,9 +53,6 @@ void CSRGraph::print_graph() noexcept {
 }
 
 void CSRGraph::propagate() {
-    std::vector<CSRNode*> nodes_to_check;
-    nodes_to_check.reserve(csr_nodes.size());
-
     for (const auto i_node : order_to_propagate) {
         auto& node = csr_nodes[i_node];
         const auto predecessors = get_predecessors(i_node);
@@ -78,6 +75,7 @@ void CSRGraph::print_states() const noexcept {
 }
 
 void CSRGraph::construct_routing() noexcept {
+    order_to_propagate.reserve((csr_nodes.size() / 2) * inputs.size());
     for (const auto i_input : inputs) {
         for (auto node : bfs(i_input)) {
             order_to_propagate.push_back(node);
