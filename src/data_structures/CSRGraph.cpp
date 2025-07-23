@@ -58,9 +58,8 @@ void CSRGraph::propagate() {
 
     for (const auto i_node : order_to_propagate) {
         auto& node = csr_nodes[i_node];
-        bool state_to_assign = false;
         const auto predecessors = get_predecessors(i_node);
-        state_to_assign = std::any_of(predecessors.begin(), predecessors.end(),
+        const bool state_to_assign = std::any_of(predecessors.begin(), predecessors.end(),
                                       [this](const size_t pred) { return csr_nodes[pred].state; });
 
         node.state = state_to_assign;
