@@ -10,6 +10,7 @@ struct Node {
 
     size_t index = 0;
     std::vector<Node> neighbors;
+    std::vector<Node> predecessors;
     NodeType node_type = NodeType::UNDEFINED;
     bool state = false;
 };

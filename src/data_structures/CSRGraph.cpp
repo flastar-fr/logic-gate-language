@@ -1,6 +1,7 @@
 #include "CSRGraph.hpp"
 
 #include <iostream>
+#include <queue>
 
 CSRGraph::CSRGraph(Graph graph) {
     const auto& nodes = graph.get_nodes();
@@ -10,6 +11,7 @@ CSRGraph::CSRGraph(Graph graph) {
 
     size_t current_node = 0;
     offsets.emplace_back(0);
+    offsets_predecessors.emplace_back(0);
     for (auto& node : nodes) {
         csr_nodes.emplace_back(node);
 
@@ -18,23 +20,34 @@ CSRGraph::CSRGraph(Graph graph) {
             edges.emplace_back(neighbor.index);
         }
 
+        const auto& predecessors = node.predecessors;
+        for (const auto& predecessor : predecessors) {
+            edges_predecessors.emplace_back(predecessor.index);
+        }
+
         if (node.node_type == NodeType::INPUT) inputs.emplace_back(current_node);
         if (node.node_type == NodeType::OUTPUT) outputs.emplace_back(current_node);
 
         const size_t offset = offsets.back() + neighbors.size();
         offsets.emplace_back(offset);
 
+        const size_t offset_predecessor = offsets_predecessors.back() + predecessors.size();
+        offsets_predecessors.emplace_back(offset_predecessor);
+
         ++current_node;
     }
 }
 
-void CSRGraph::print_graph() const noexcept {
+void CSRGraph::print_graph() noexcept {
     for (size_t i = 0; i < offsets.size() - 1; ++i) {
         std::cout << "Node " << i << ": ";
-        const auto offset = offsets[i];
-        const auto offset_sup = offsets[i + 1];
-        for (size_t j = offset; j < offset_sup; ++j) {
-            std::cout << edges[j] << " ";
+        std::cout << "Neighbors: ";
+        for (const auto& neighbor : get_neighbors(i)) {
+            std::cout << csr_nodes[neighbor].id << " ";
+        }
+        std::cout << "Predecessors: ";
+        for (const auto& predecessor : get_predecessors(i)) {
+            std::cout << csr_nodes[predecessor].id << " ";
         }
         std::cout << std::endl;
     }
@@ -46,7 +59,7 @@ void CSRGraph::process() {
 
     for (const auto i_input : inputs) {
         const auto& input = csr_nodes[i_input];
-        for (const auto& neighbor : get_adjacent_neighbors(input)) {
+        for (const auto& neighbor : get_neighbors(i_input)) {
             csr_nodes[neighbor].state = input.state;
             // TODO : implement BFS going for each inputs and switching the state correctly
         }
@@ -65,6 +78,28 @@ void CSRGraph::print_process() const noexcept {
     }
 }
 
-NeighborRange<size_t> CSRGraph::get_adjacent_neighbors(const CSRNode& node) noexcept {
-    return NeighborRange(&edges[offsets[node.id]], &edges[offsets[node.id + 1]]);
+std::vector<size_t> CSRGraph::bfs(const size_t from) {
+    std::vector<size_t> nodes_order;
+    nodes_order.reserve(csr_nodes.size());
+
+    std::queue<size_t> bfs_queue;
+    bfs_queue.push(from);
+    while (!bfs_queue.empty()) {
+        const auto i_node = bfs_queue.front();
+        bfs_queue.pop();
+        for (const auto& neighbor : get_neighbors(i_node)) {
+            nodes_order.emplace_back(neighbor);
+            bfs_queue.push(neighbor);
+        }
+    }
+
+    return nodes_order;
+}
+
+NeighborRange<size_t> CSRGraph::get_neighbors(const size_t node) noexcept {
+    return NeighborRange(&edges[offsets[node]], &edges[offsets[node + 1]]);
+}
+
+NeighborRange<size_t> CSRGraph::get_predecessors(const size_t node) noexcept {
+    return NeighborRange(&edges_predecessors[offsets_predecessors[node]], &edges_predecessors[offsets_predecessors[node + 1]]);
 }

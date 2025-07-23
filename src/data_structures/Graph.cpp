@@ -16,13 +16,19 @@ void Graph::add_edge(const Node& from, Node& to) {
         nodes[to.index] = to;
     }
     nodes[from.index].neighbors.emplace_back(to);
+    nodes[to.index].predecessors.emplace_back(from);
 }
 
 void Graph::print_graph() const {
     for (size_t i = 0; i < nodes.size(); ++i) {
         std::cout << "Node " << i << ": ";
+        std::cout << "Neighbors: ";
         for (const auto& neighbor : nodes[i].neighbors) {
             std::cout << neighbor.index << " ";
+        }
+        std::cout << "Predecessors: ";
+        for (const auto& predecessor : nodes[i].predecessors) {
+            std::cout << predecessor.index << " ";
         }
         std::cout << std::endl;
     }
