@@ -3,6 +3,8 @@ set_languages("c++17")
 
 add_requires("gtest 1.16", {configs = {main = false}, system = false})
 
+add_includedirs("src", {public = true})
+
 target("logic-gate-language")
     set_kind("binary")
     add_files("src/**.cpp")
