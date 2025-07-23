@@ -20,6 +20,6 @@ private:
     std::vector<size_t> edges;
     std::vector<size_t> offsets;
     std::vector<CSRNode> csr_nodes;
-    std::vector<CSRNode*> inputs;  // TODO : store inputs as size_t to csr_nodes
-    std::vector<CSRNode*> outputs;  // TODO : store outputs as size_t to csr_nodes
+    std::vector<size_t> inputs;
+    std::vector<size_t> outputs;
 };
