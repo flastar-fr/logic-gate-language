@@ -11,6 +11,8 @@ public:
 
     void print_graph() noexcept;
     void execute_wire_propagation(CSRNode& node, NeighborRange<size_t> predecessors) const;
+    void execute_gate_prerendered_propagation(CSRNode& node, NeighborRange<size_t> predecessors) const;
+    void execute_gate_propagation(CSRNode& node, NeighborRange<size_t> predecessors) const;
     void propagate();
     void print_states() const noexcept;
     void construct_routing() noexcept;

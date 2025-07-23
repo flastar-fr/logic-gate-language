@@ -10,9 +10,12 @@ void Graph::add_edge(const Node& from, const Node& to) {
     nodes[from.index].index = from.index;
     nodes[from.index].node_type = from.node_type;
     nodes[from.index].state = from.state;
+    nodes[from.index].gate_data = from.gate_data;
     nodes[to.index].index = to.index;
     nodes[to.index].node_type = to.node_type;
     nodes[to.index].state = to.state;
+    nodes[to.index].gate_data = to.gate_data;
+
     nodes[from.index].neighbors.emplace_back(to.index);
     nodes[to.index].predecessors.emplace_back(from.index);
 }

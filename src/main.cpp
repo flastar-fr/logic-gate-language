@@ -78,8 +78,9 @@ int main() {
     node0 = Node(0, NodeType::INPUT);
     node0.state = true;
     node1 = Node(1, NodeType::INPUT);
-    node1.state = false;
+    node1.state = true;
     node2 = Node(2, NodeType::GATE);
+    node2.gate_data = GateData(0b1000, GateRenderType::PRERENDERED);
     node3 = Node(3, NodeType::OUTPUT);
     graph = Graph(5);
     graph.add_edge(node0, node2);

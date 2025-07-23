@@ -59,6 +59,35 @@ void CSRGraph::execute_wire_propagation(CSRNode& node, const NeighborRange<size_
     node.state = state_to_assign;
 }
 
+void CSRGraph::execute_gate_prerendered_propagation(CSRNode& node, const NeighborRange<size_t> predecessors) const {
+    size_t truth_table_index = 0;
+    for (const auto predecessor : predecessors) {
+        truth_table_index <<= 1;
+        if (csr_nodes[predecessor].state) {
+            truth_table_index |= 1;
+        }
+    }
+
+    node.state = node.gate_data.truth_table >> truth_table_index & 1;
+}
+
+void CSRGraph::execute_gate_propagation(CSRNode& node, const NeighborRange<size_t> predecessors) const {
+    switch (node.gate_data.render_type) {
+        case GateRenderType::PRERENDERED: {
+            execute_gate_prerendered_propagation(node, predecessors);
+            break;
+        }
+        case GateRenderType::WIRED: {
+            std::cerr << "Not implemented yet" << std::endl;
+            break;
+        }
+        default: {
+            std::cerr << "Uknown render type" << std::endl;
+            throw std::invalid_argument("Unknown render type");
+        }
+    }
+}
+
 void CSRGraph::propagate() {
     for (const auto i_node : order_to_propagate) {
         auto& node = csr_nodes[i_node];
@@ -66,21 +95,12 @@ void CSRGraph::propagate() {
         switch (node.node_type) {
             case NodeType::INPUT:
             case NodeType::OUTPUT:
-            case NodeType::NODE_WIRE: execute_wire_propagation(node, predecessors); break;
+            case NodeType::NODE_WIRE: {
+                execute_wire_propagation(node, predecessors);
+                break;
+            }
             case NodeType::GATE: {
-                switch (node.gate_data.render_type) {
-                    case GateRenderType::PRERENDERED: {
-                        break;
-                    }
-                    case GateRenderType::WIRED: {
-                        std::cerr << "Not implemented yet" << std::endl;
-                        break;
-                    }
-                    default: {
-                        std::cerr << "Uknown render type" << std::endl;
-                        throw std::invalid_argument("Unknown render type");
-                    }
-                }
+                execute_gate_propagation(node, predecessors);
                 break;
             }
             default: {
@@ -88,7 +108,6 @@ void CSRGraph::propagate() {
                 throw std::invalid_argument("Unknown node type");
             }
         }
-
     }
 }
 

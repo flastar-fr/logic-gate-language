@@ -14,5 +14,5 @@ struct Node {
     std::vector<size_t> predecessors;
     NodeType node_type = NodeType::UNDEFINED;
     bool state = false;
-    GateData gate_data;
+    GateData gate_data{};
 };

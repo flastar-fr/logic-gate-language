@@ -1,11 +1,15 @@
 #pragma once
+#include <cstdint>
+
 #include "GateRenderType.hpp"
-#include "TruthTable.hpp"
 
 struct GateData {
     GateData() = default;
-    GateData(const TruthTable truth_table, GateRenderType render_type): truth_table(truth_table), render_type(render_type) {}
 
-    TruthTable truth_table;
+    GateData(const uint8_t truth_table, const GateRenderType render_type): render_type(render_type),
+                                                                           truth_table(truth_table) {}
+
+
     GateRenderType render_type;
+    uint8_t truth_table;
 };
