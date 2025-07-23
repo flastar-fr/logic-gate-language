@@ -52,14 +52,43 @@ void CSRGraph::print_graph() noexcept {
     }
 }
 
+void CSRGraph::execute_wire_propagation(CSRNode& node, const NeighborRange<size_t> predecessors) const {
+    const bool state_to_assign = std::any_of(predecessors.begin(), predecessors.end(),
+                                             [this](const size_t pred) { return csr_nodes[pred].state; });
+
+    node.state = state_to_assign;
+}
+
 void CSRGraph::propagate() {
     for (const auto i_node : order_to_propagate) {
         auto& node = csr_nodes[i_node];
         const auto predecessors = get_predecessors(i_node);
-        const bool state_to_assign = std::any_of(predecessors.begin(), predecessors.end(),
-                                      [this](const size_t pred) { return csr_nodes[pred].state; });
+        switch (node.node_type) {
+            case NodeType::INPUT:
+            case NodeType::OUTPUT:
+            case NodeType::NODE_WIRE: execute_wire_propagation(node, predecessors); break;
+            case NodeType::GATE: {
+                switch (node.gate_data.render_type) {
+                    case GateRenderType::PRERENDERED: {
+                        break;
+                    }
+                    case GateRenderType::WIRED: {
+                        std::cerr << "Not implemented yet" << std::endl;
+                        break;
+                    }
+                    default: {
+                        std::cerr << "Uknown render type" << std::endl;
+                        throw std::invalid_argument("Unknown render type");
+                    }
+                }
+                break;
+            }
+            default: {
+                std::cerr << "Uknown node type" << std::endl;
+                throw std::invalid_argument("Unknown node type");
+            }
+        }
 
-        node.state = state_to_assign;
     }
 }
 

@@ -10,6 +10,7 @@ public:
     explicit CSRGraph(Graph graph);
 
     void print_graph() noexcept;
+    void execute_wire_propagation(CSRNode& node, NeighborRange<size_t> predecessors) const;
     void propagate();
     void print_states() const noexcept;
     void construct_routing() noexcept;
