@@ -1,6 +1,6 @@
 #pragma once
 
-template<typename T>
+template <typename T>
 struct NeighborRange {
     explicit NeighborRange(T* i_begin, T* i_end): i_begin(i_begin), i_end(i_end) {}
 

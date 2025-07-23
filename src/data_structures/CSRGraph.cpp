@@ -1,5 +1,6 @@
 #include "CSRGraph.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <queue>
 
@@ -60,12 +61,13 @@ void CSRGraph::propagate() {
     nodes_to_check.reserve(csr_nodes.size());
 
     for (const auto i_node : order_to_propagate) {
+        auto& node = csr_nodes[i_node];
         bool state_to_assign = false;
         const auto predecessors = get_predecessors(i_node);
-        for (const auto& predecessor : predecessors) {
-            state_to_assign = state_to_assign || csr_nodes[predecessor].state;
-        }
-        csr_nodes[i_node].state = state_to_assign;
+        state_to_assign = std::any_of(predecessors.begin(), predecessors.end(),
+                                      [this](const size_t pred) { return csr_nodes[pred].state; });
+
+        node.state = state_to_assign;
     }
 }
 
@@ -111,5 +113,6 @@ NeighborRange<size_t> CSRGraph::get_neighbors(const size_t node) noexcept {
 }
 
 NeighborRange<size_t> CSRGraph::get_predecessors(const size_t node) noexcept {
-    return NeighborRange(&edges_predecessors[offsets_predecessors[node]], &edges_predecessors[offsets_predecessors[node + 1]]);
+    return NeighborRange(&edges_predecessors[offsets_predecessors[node]],
+                         &edges_predecessors[offsets_predecessors[node + 1]]);
 }
