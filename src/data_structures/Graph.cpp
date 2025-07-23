@@ -3,20 +3,18 @@
 #include <iostream>
 
 Graph::Graph(const int size) {
-    nodes.reserve(size);
+    nodes.resize(size, Node());
 }
 
-void Graph::add_edge(const Node& from, Node& to) {
-    if (nodes.size() <= from.index) {
-        nodes.resize(from.index + 1);
-        nodes[from.index] = from;
-    }
-    if (nodes.size() <= to.index) {
-        nodes.resize(to.index + 1);
-        nodes[to.index] = to;
-    }
-    nodes[from.index].neighbors.emplace_back(to);
-    nodes[to.index].predecessors.emplace_back(from);
+void Graph::add_edge(const Node& from, const Node& to) {
+    nodes[from.index].index = from.index;
+    nodes[from.index].node_type = from.node_type;
+    nodes[from.index].state = from.state;
+    nodes[to.index].index = to.index;
+    nodes[to.index].node_type = to.node_type;
+    nodes[to.index].state = to.state;
+    nodes[from.index].neighbors.emplace_back(to.index);
+    nodes[to.index].predecessors.emplace_back(from.index);
 }
 
 void Graph::print_graph() const {
@@ -24,11 +22,11 @@ void Graph::print_graph() const {
         std::cout << "Node " << i << ": ";
         std::cout << "Neighbors: ";
         for (const auto& neighbor : nodes[i].neighbors) {
-            std::cout << neighbor.index << " ";
+            std::cout << neighbor << " ";
         }
         std::cout << "Predecessors: ";
         for (const auto& predecessor : nodes[i].predecessors) {
-            std::cout << predecessor.index << " ";
+            std::cout << predecessor << " ";
         }
         std::cout << std::endl;
     }
