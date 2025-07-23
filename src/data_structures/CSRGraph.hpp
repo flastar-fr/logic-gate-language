@@ -10,8 +10,8 @@ public:
     explicit CSRGraph(Graph graph);
 
     void print_graph() noexcept;
-    void process();
-    void print_process() const noexcept;
+    void propagate();
+    void print_states() const noexcept;
     void construct_routing() noexcept;
     [[nodiscard]] std::vector<size_t> bfs(size_t from);
     [[nodiscard]] NeighborRange<size_t> get_neighbors(size_t node) noexcept;
@@ -27,5 +27,5 @@ private:
     std::vector<CSRNode> csr_nodes;
     std::vector<size_t> inputs;
     std::vector<size_t> outputs;
-    std::vector<size_t> order_to_execute;
+    std::vector<size_t> order_to_propagate;
 };

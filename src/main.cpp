@@ -22,8 +22,8 @@ int main() {
 
     std::cout << std::endl;
     std::cout << "Result" << std::endl;
-    graph_csr.process();
-    graph_csr.print_process();
+    graph_csr.propagate();
+    graph_csr.print_states();
 
     std::cout << std::endl;
     std::cout << "Graph 2 nodes" << std::endl;
@@ -42,8 +42,8 @@ int main() {
 
     std::cout << std::endl;
     std::cout << "Result" << std::endl;
-    graph_csr.process();
-    graph_csr.print_process();
+    graph_csr.propagate();
+    graph_csr.print_states();
 
     std::cout << std::endl;
     std::cout << "Graph 5 nodes" << std::endl;
@@ -69,8 +69,8 @@ int main() {
 
     std::cout << std::endl;
     std::cout << "Result" << std::endl;
-    graph_csr.process();
-    graph_csr.print_process();
+    graph_csr.propagate();
+    graph_csr.print_states();
 
     return 0;
 }
