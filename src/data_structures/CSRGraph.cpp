@@ -36,6 +36,8 @@ CSRGraph::CSRGraph(Graph graph) {
 
         ++current_node;
     }
+
+    construct_routing();
 }
 
 void CSRGraph::print_graph() noexcept {
@@ -57,13 +59,13 @@ void CSRGraph::process() {
     std::vector<CSRNode*> nodes_to_check;
     nodes_to_check.reserve(csr_nodes.size());
 
-    for (const auto i_input : inputs) {
-        const auto& input = csr_nodes[i_input];
-        for (const auto& neighbor : get_neighbors(i_input)) {
-            csr_nodes[neighbor].state = input.state;
-            // TODO : implement BFS going for each inputs and switching the state correctly
+    for (const auto i_node : order_to_execute) {
+        bool state_to_assign = false;
+        const auto predecessors = get_predecessors(i_node);
+        for (const auto& predecessor : predecessors) {
+            state_to_assign = state_to_assign || csr_nodes[predecessor].state;
         }
-
+        csr_nodes[i_node].state = state_to_assign;
     }
 }
 
@@ -75,6 +77,14 @@ void CSRGraph::print_process() const noexcept {
     for (const auto i_output : outputs) {
         const auto& output = csr_nodes[i_output];
         std::cout << "Output " << output.id << ": " << output.state << std::endl;
+    }
+}
+
+void CSRGraph::construct_routing() noexcept {
+    for (const auto i_input : inputs) {
+        for (auto node : bfs(i_input)) {
+            order_to_execute.push_back(node);
+        }
     }
 }
 

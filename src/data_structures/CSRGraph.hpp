@@ -12,6 +12,7 @@ public:
     void print_graph() noexcept;
     void process();
     void print_process() const noexcept;
+    void construct_routing() noexcept;
     [[nodiscard]] std::vector<size_t> bfs(size_t from);
     [[nodiscard]] NeighborRange<size_t> get_neighbors(size_t node) noexcept;
     [[nodiscard]] NeighborRange<size_t> get_predecessors(size_t node) noexcept;
