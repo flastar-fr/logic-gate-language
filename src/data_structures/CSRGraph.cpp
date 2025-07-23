@@ -17,14 +17,10 @@ CSRGraph::CSRGraph(Graph graph) {
         csr_nodes.emplace_back(node);
 
         const auto& neighbors = node.neighbors;
-        for (const auto& neighbor : neighbors) {
-            edges.emplace_back(neighbor);
-        }
+        edges.insert(edges.end(), neighbors.begin(), neighbors.end());
 
         const auto& predecessors = node.predecessors;
-        for (const auto& predecessor : predecessors) {
-            edges_predecessors.emplace_back(predecessor);
-        }
+        edges_predecessors.insert(edges_predecessors.end(), predecessors.begin(), predecessors.end());
 
         if (node.node_type == NodeType::INPUT) inputs.emplace_back(current_node);
         if (node.node_type == NodeType::OUTPUT) outputs.emplace_back(current_node);
