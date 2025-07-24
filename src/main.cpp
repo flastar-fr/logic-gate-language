@@ -77,7 +77,7 @@ int main() {
     std::cout << "Graph" << std::endl;
     node0 = Node(0, NodeType::INPUT);
     node0.state = true;
-    node1 = Node(1, NodeType::INPUT);
+    node1 = Node(1, NodeType::FIXED);
     node1.state = true;
     node2 = Node(2, NodeType::GATE);
     node2.gate_data = GateData(0b1000, GateRenderType::PRERENDERED);

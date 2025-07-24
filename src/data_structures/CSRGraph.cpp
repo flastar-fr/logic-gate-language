@@ -110,6 +110,7 @@ void CSRGraph::propagate() {
         if (node.node_type == NodeType::INPUT) continue;
         const auto predecessors = get_predecessors(i_node);
         switch (node.node_type) {
+            case NodeType::FIXED:
             case NodeType::INPUT: break;
             case NodeType::OUTPUT:
             case NodeType::WIRE: {
