@@ -77,10 +77,6 @@ void CSRGraph::execute_gate_propagation(CSRNode& node, const NeighborRange<size_
             execute_gate_prerendered_propagation(node, predecessors);
             break;
         }
-        case GateRenderType::WIRED: {
-            std::cerr << "Not implemented yet" << std::endl;
-            break;
-        }
         default: {
             std::cerr << "Uknown render type" << std::endl;
             throw std::invalid_argument("Unknown render type");
