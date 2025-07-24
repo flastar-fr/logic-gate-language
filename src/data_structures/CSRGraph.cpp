@@ -91,7 +91,7 @@ void CSRGraph::propagate() {
         switch (node.node_type) {
             case NodeType::INPUT:
             case NodeType::OUTPUT:
-            case NodeType::NODE_WIRE: {
+            case NodeType::WIRE: {
                 execute_wire_propagation(node, predecessors);
                 break;
             }

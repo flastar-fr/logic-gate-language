@@ -8,7 +8,7 @@ int main() {
     std::cout << "Graph" << std::endl;
     auto node0 = Node(0, NodeType::INPUT);
     node0.state = true;
-    auto node1 = Node(1, NodeType::NODE_WIRE);
+    auto node1 = Node(1, NodeType::WIRE);
     auto node2 = Node(2, NodeType::OUTPUT);
     auto graph = Graph(3);
     graph.add_edge(node0, node1);
@@ -52,7 +52,7 @@ int main() {
     node0.state = true;
     node1 = Node(1, NodeType::INPUT);
     node1.state = false;
-    node2 = Node(2, NodeType::NODE_WIRE);
+    node2 = Node(2, NodeType::WIRE);
     auto node3 = Node(3, NodeType::OUTPUT);
     auto node4 = Node(4, NodeType::OUTPUT);
     graph = Graph(5);

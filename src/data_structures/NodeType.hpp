@@ -3,7 +3,7 @@
 enum class NodeType {
     UNDEFINED,
     GATE,
-    NODE_WIRE,
+    WIRE,
     INPUT,
     OUTPUT
 };
