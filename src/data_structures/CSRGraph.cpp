@@ -94,7 +94,7 @@ void CSRGraph::execute_gate_prerendered_propagation(CSRNode& node, const Neighbo
 void CSRGraph::execute_gate_propagation(CSRNode& node, const NeighborRange<size_t> predecessors) const {
     switch (node.gate_data.render_type) {
         case GateRenderType::PRERENDERED: {
-            execute_gate_prerendered_propagation(node, predecessors);
+            execute_gate_prerendered_propagation(node, predecessors); // TODO : this only works for 1 output gate, find a way for multiple outputs (add an amount of outputs to the GateData structure ?)
             break;
         }
         default: {
