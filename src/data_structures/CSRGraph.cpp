@@ -3,6 +3,26 @@
 #include <algorithm>
 #include <iostream>
 #include <queue>
+#include <stack>
+#include <unordered_set>
+
+bool find_unvisited_neighbor(const NeighborRange<size_t>& neighbors, std::unordered_set<size_t>& to_visit,
+                             std::stack<size_t>& current_branch) {
+    auto it = neighbors.begin();
+    bool found = false;
+
+    while (it != neighbors.end() && !found) {
+        size_t neighbor = *it;
+        if (to_visit.count(neighbor)) {
+            to_visit.erase(neighbor);
+            current_branch.push(neighbor);
+            found = true;
+        }
+        ++it;
+    }
+
+    return found;
+}
 
 CSRGraph::CSRGraph(Graph graph) {
     const auto& nodes = graph.get_nodes();
@@ -87,9 +107,10 @@ void CSRGraph::execute_gate_propagation(CSRNode& node, const NeighborRange<size_
 void CSRGraph::propagate() {
     for (const auto i_node : order_to_propagate) {
         auto& node = csr_nodes[i_node];
+        if (node.node_type == NodeType::INPUT) continue;
         const auto predecessors = get_predecessors(i_node);
         switch (node.node_type) {
-            case NodeType::INPUT:
+            case NodeType::INPUT: break;
             case NodeType::OUTPUT:
             case NodeType::WIRE: {
                 execute_wire_propagation(node, predecessors);
@@ -118,31 +139,39 @@ void CSRGraph::print_states() const noexcept {
     }
 }
 
-void CSRGraph::construct_routing() noexcept {
-    order_to_propagate.reserve(csr_nodes.size() / 2 * inputs.size());
-    for (const auto i_input : inputs) {
-        for (auto node : bfs(i_input)) {
-            order_to_propagate.push_back(node);
+void CSRGraph::visit_branch(std::unordered_set<size_t>& to_visit, std::stack<size_t>& current_branch,
+                            std::vector<size_t>& topological_order) {
+    while (!current_branch.empty()) {
+        size_t node = current_branch.top();
+        auto neighbors = get_neighbors(node);
+        const bool has_not_visited_neighbor = find_unvisited_neighbor(neighbors, to_visit, current_branch);
+        if (!has_not_visited_neighbor) {
+            topological_order.push_back(node);
+            current_branch.pop();
         }
     }
 }
 
-std::vector<size_t> CSRGraph::bfs(const size_t from) {
-    std::vector<size_t> nodes_order;
-    nodes_order.reserve(csr_nodes.size());
-
-    std::queue<size_t> bfs_queue;
-    bfs_queue.push(from);
-    while (!bfs_queue.empty()) {
-        const auto i_node = bfs_queue.front();
-        bfs_queue.pop();
-        for (const auto& neighbor : get_neighbors(i_node)) {
-            nodes_order.emplace_back(neighbor);
-            bfs_queue.push(neighbor);
-        }
+void CSRGraph::construct_routing() noexcept {
+    std::unordered_set<size_t> to_visit;
+    for (const auto& node : csr_nodes) {
+        to_visit.insert(node.id);
     }
 
-    return nodes_order;
+    std::stack<size_t> current_branch;
+    std::vector<size_t> topological_order;
+    topological_order.reserve(csr_nodes.size());
+
+    while (!to_visit.empty()) {
+        size_t current = *to_visit.begin();
+        current_branch.push(current);
+        to_visit.erase(current);
+
+        visit_branch(to_visit, current_branch, topological_order);
+    }
+
+    std::reverse(topological_order.begin(), topological_order.end());
+    order_to_propagate = std::move(topological_order);
 }
 
 NeighborRange<size_t> CSRGraph::get_neighbors(const size_t node) noexcept {

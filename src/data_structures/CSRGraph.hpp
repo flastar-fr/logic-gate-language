@@ -1,4 +1,6 @@
 #pragma once
+#include <stack>
+#include <unordered_set>
 #include <vector>
 
 #include "CSRNode.hpp"
@@ -15,8 +17,9 @@ public:
     void execute_gate_propagation(CSRNode& node, NeighborRange<size_t> predecessors) const;
     void propagate();
     void print_states() const noexcept;
+    void visit_branch(std::unordered_set<size_t>& to_visit, std::stack<size_t>& current_branch,
+                      std::vector<size_t>& topological_order);
     void construct_routing() noexcept;
-    [[nodiscard]] std::vector<size_t> bfs(size_t from);
     [[nodiscard]] NeighborRange<size_t> get_neighbors(size_t node) noexcept;
     [[nodiscard]] NeighborRange<size_t> get_predecessors(size_t node) noexcept;
     [[nodiscard]] std::vector<size_t>& get_edges() noexcept { return edges; }
