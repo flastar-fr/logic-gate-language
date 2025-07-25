@@ -1,136 +1,26 @@
 #include <iostream>
 
-#include "data_structures/CSRGraph.hpp"
-#include "data_structures/Graph.hpp"
+#include "scanner/Scanner.hpp"
+#include "utils/io_manipulation.hpp"
 
-int main() {
-    std::cout << "Graph 3 nodes" << std::endl;
-    std::cout << "Graph" << std::endl;
-    auto node0 = Node(0, NodeType::INPUT);
-    node0.state = true;
-    auto node1 = Node(1, NodeType::WIRE);
-    auto node2 = Node(2, NodeType::OUTPUT);
-    auto graph = Graph(3);
-    graph.add_edge(node0, node1);
-    graph.add_edge(node1, node2);
-    graph.print_graph();
+int main(const int argc, char* argv[]) {
+    std::vector<std::string> program;
+    if (argc < 2) {
+        std::cerr << "No inputed file" << std::endl;
+        return 1;
+    }
 
-    std::cout << std::endl;
-    std::cout << "Graph CSR" << std::endl;
-    auto graph_csr = CSRGraph(graph);
-    graph_csr.print_graph();
+    const bool is_open = read_file(std::string(argv[1]), program);
+    if (!is_open) {
+        return 2;
+    }
 
-    std::cout << std::endl;
-    std::cout << "Result" << std::endl;
-    graph_csr.propagate();
-    graph_csr.print_states();
+    auto scanner = Scanner(program);
+    const auto tokens = scanner.scan();
 
-    std::cout << std::endl;
-    std::cout << "Graph 2 nodes" << std::endl;
-    std::cout << "Graph" << std::endl;
-    node0 = Node(0, NodeType::INPUT);
-    node0.state = true;
-    node1 = Node(1, NodeType::OUTPUT);
-    graph = Graph(2);
-    graph.add_edge(node0, node1);
-    graph.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Graph CSR" << std::endl;
-    graph_csr = CSRGraph(graph);
-    graph_csr.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Result" << std::endl;
-    graph_csr.propagate();
-    graph_csr.print_states();
-
-    std::cout << std::endl;
-    std::cout << "Graph 5 nodes" << std::endl;
-    std::cout << "Graph" << std::endl;
-    node0 = Node(0, NodeType::INPUT);
-    node0.state = true;
-    node1 = Node(1, NodeType::INPUT);
-    node1.state = false;
-    node2 = Node(2, NodeType::WIRE);
-    auto node3 = Node(3, NodeType::OUTPUT);
-    auto node4 = Node(4, NodeType::OUTPUT);
-    graph = Graph(5);
-    graph.add_edge(node0, node2);
-    graph.add_edge(node1, node4);
-    graph.add_edge(node2, node4);
-    graph.add_edge(node2, node3);
-    graph.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Graph CSR" << std::endl;
-    graph_csr = CSRGraph(graph);
-    graph_csr.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Result" << std::endl;
-    graph_csr.propagate();
-    graph_csr.print_states();
-
-    std::cout << std::endl;
-    std::cout << "Graph AND gate" << std::endl;
-    std::cout << "Graph" << std::endl;
-    node0 = Node(0, NodeType::INPUT);
-    node0.state = true;
-    node1 = Node(1, NodeType::INPUT);
-    node1.state = true;
-    node2 = Node(2, NodeType::GATE);
-    node2.gate_data = GateData(0b1000, 1, GateRenderType::PRERENDERED);
-    node3 = Node(3, NodeType::GATE_OUTPUT);
-    node4 = Node(4, NodeType::OUTPUT);
-    graph = Graph(5);
-    graph.add_edge(node0, node2);
-    graph.add_edge(node1, node2);
-    graph.add_edge(node2, node3);
-    graph.add_edge(node3, node4);
-    graph.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Graph CSR" << std::endl;
-    graph_csr = CSRGraph(graph);
-    graph_csr.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Result" << std::endl;
-    graph_csr.propagate();
-    graph_csr.print_states();
-
-    std::cout << std::endl;
-    std::cout << "Graph custom gate" << std::endl;
-    std::cout << "Graph" << std::endl;
-    node0 = Node(0, NodeType::INPUT);
-    node0.state = true;
-    node1 = Node(1, NodeType::INPUT);
-    node1.state = true;
-    node2 = Node(2, NodeType::GATE);
-    node2.gate_data = GateData(0b10000001, 2, GateRenderType::PRERENDERED);
-    node3 = Node(3, NodeType::GATE_OUTPUT);
-    node4 = Node(4, NodeType::GATE_OUTPUT);
-    auto node5 = Node(5, NodeType::OUTPUT);
-    auto node6 = Node(6, NodeType::OUTPUT);
-    graph = Graph(7);
-    graph.add_edge(node0, node2);
-    graph.add_edge(node1, node2);
-    graph.add_edge(node2, node3);
-    graph.add_edge(node2, node4);
-    graph.add_edge(node3, node5);
-    graph.add_edge(node4, node6);
-    graph.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Graph CSR" << std::endl;
-    graph_csr = CSRGraph(graph);
-    graph_csr.print_graph();
-
-    std::cout << std::endl;
-    std::cout << "Result" << std::endl;
-    graph_csr.propagate();
-    graph_csr.print_states();
+    for (const auto& token : tokens) {
+        std::cout << token << std::endl;
+    }
 
     return 0;
 }
