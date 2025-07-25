@@ -18,6 +18,7 @@ const std::unordered_map<std::string, TokenType> KEYCHARS = {
     {":", TokenType::COLON},
     {".", TokenType::DOT},
     {"=", TokenType::EQUAL},
+    {"|", TokenType::PIPE},
     {"->", TokenType::RIGHT_ARROW},
     {"//", TokenType::DOUBLE_SLASH},
     {"\n", TokenType::EOL}
@@ -34,7 +35,7 @@ bool is_keychar(const std::string& token_to_test) {
 Scanner::Scanner(const std::vector<std::string>& program) : program(program) {}
 
 std::vector<Token> Scanner::scan() {
-    for (auto line : program) {
+    for (const auto& line : program) {
         scan_line(line);
         add_token(EOL_TOKEN);
     }
@@ -43,23 +44,11 @@ std::vector<Token> Scanner::scan() {
 
 void Scanner::scan_line(const std::string& line) {
     for (const auto char_token : line) {
-        if (char_token == QUOTE_CHAR) {
-            are_double_quotes_open = !are_double_quotes_open;
-        }
-
-        std::string token_str = {1, char_token};
-
-        if (is_keychar(token_str) && !current_token.empty()) {
+        if (char_token == QUOTE_CHAR) are_double_quotes_open = !are_double_quotes_open;
+        if (is_keychar(std::string(1, char_token)) && !current_token.empty()) {
             check_literal();
         }
-
-        if (char_token == ' ') {
-            check_literal();
-            continue;
-        }
-
-        current_token += char_token;
-        check_token();
+        append_or_finalize_token(char_token);
     }
 
     check_token();
@@ -92,4 +81,14 @@ void Scanner::check_literal() {
 void Scanner::add_token(const Token& token) {
     tokens.push_back(token);
     current_token.clear();
+}
+
+void Scanner::append_or_finalize_token(const std::string::value_type char_token) {
+    if (char_token == ' ') {
+        check_literal();
+        return;
+    }
+
+    current_token.push_back(char_token);
+    check_token();
 }

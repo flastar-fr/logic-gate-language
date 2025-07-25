@@ -13,6 +13,7 @@ public:
     void check_token();
     void check_literal();
     void add_token(const Token& token);
+    void append_or_finalize_token(std::string::value_type char_token);
 
 private:
     std::vector<std::string> program;

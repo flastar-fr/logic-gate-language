@@ -11,6 +11,7 @@ enum class TokenType {
     COLON,
     DOT,
     EQUAL,
+    PIPE,
 
     // symbols two chars
     RIGHT_ARROW,
@@ -62,6 +63,10 @@ inline std::ostream& operator<<(std::ostream& lhs, const TokenType& rhs) {
         }
         case TokenType::EQUAL: {
             to_display = "EQUAL";
+            break;
+        }
+        case TokenType::PIPE: {
+            to_display = "PIPE";
             break;
         }
         case TokenType::RIGHT_ARROW: {
