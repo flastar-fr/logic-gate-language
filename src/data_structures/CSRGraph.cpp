@@ -7,6 +7,8 @@
 #include <string>
 #include <unordered_set>
 
+#include "utils/error_messages.hpp"
+
 bool find_unvisited_neighbor(const NeighborRange<size_t>& neighbors, std::unordered_set<size_t>& to_visit,
                              std::stack<size_t>& current_branch) {
     auto it = neighbors.begin();
@@ -85,8 +87,7 @@ void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const N
     if (node.gate_data.amount_outputs != neighbors.end() - neighbors.begin()) {
         const std::string error_message = "Invalid amount of outputs. Expected " + std::to_string(node.gate_data.amount_outputs) + ", got " +
             std::to_string(neighbors.end() - neighbors.begin());
-        std::cerr << error_message << std::endl;
-        throw std::invalid_argument(error_message);
+        throw_invalid_argument_error(error_message);
     }
 
     size_t truth_table_index = 0;
@@ -101,8 +102,7 @@ void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const N
     for (const auto i_neighbor : neighbors) {
         auto& neighbor = csr_nodes[i_neighbor];
         if (neighbor.node_type != NodeType::GATE_OUTPUT) {
-            std::cerr << "Neighbor for a gate that is not a GATE_OUTPUT" << std::endl;
-            throw std::invalid_argument("Neighbor for a gate that is not a GATE_OUTPUT");
+            throw_invalid_argument_error("Neighbor for a gate that is not a GATE_OUTPUT");
         }
         neighbor.state = node.gate_data.truth_table >> truth_table_index & 1;
         truth_table_index += amount_bits_per_result;
@@ -117,8 +117,7 @@ void CSRGraph::execute_gate_propagation(const CSRNode& node, const NeighborRange
             break;
         }
         default: {
-            std::cerr << "Uknown render type" << std::endl;
-            throw std::invalid_argument("Unknown render type");
+            throw_invalid_argument_error("Unknown render type");
         }
     }
 }
@@ -143,8 +142,7 @@ void CSRGraph::propagate() {
                 break;
             }
             default: {
-                std::cerr << "Uknown node type" << std::endl;
-                throw std::invalid_argument("Unknown node type");
+                throw_invalid_argument_error("Unknown node type");
             }
         }
     }
