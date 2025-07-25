@@ -6,5 +6,6 @@ enum class NodeType {
     WIRE,
     INPUT,
     OUTPUT,
-    FIXED
+    FIXED,
+    GATE_OUTPUT
 };

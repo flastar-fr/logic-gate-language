@@ -4,6 +4,7 @@
 #include <iostream>
 #include <queue>
 #include <stack>
+#include <string>
 #include <unordered_set>
 
 bool find_unvisited_neighbor(const NeighborRange<size_t>& neighbors, std::unordered_set<size_t>& to_visit,
@@ -79,7 +80,14 @@ void CSRGraph::execute_wire_propagation(CSRNode& node, const NeighborRange<size_
     node.state = state_to_assign;
 }
 
-void CSRGraph::execute_gate_prerendered_propagation(CSRNode& node, const NeighborRange<size_t> predecessors) const {
+void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const NeighborRange<size_t> predecessors,
+                                                    const NeighborRange<size_t> neighbors) {
+    if (node.gate_data.amount_outputs != neighbors.end() - neighbors.begin()) {
+        throw std::invalid_argument(
+            "Invalid amount of outputs. Expected " + std::to_string(node.gate_data.amount_outputs) + ", got " +
+            std::to_string(neighbors.end() - neighbors.begin()));
+    }
+
     size_t truth_table_index = 0;
     for (const auto predecessor : predecessors) {
         truth_table_index <<= 1;
@@ -88,13 +96,19 @@ void CSRGraph::execute_gate_prerendered_propagation(CSRNode& node, const Neighbo
         }
     }
 
-    node.state = node.gate_data.truth_table >> truth_table_index & 1;
+    const auto amount_bits_per_result = static_cast<size_t>(std::pow(predecessors.end() - predecessors.begin(), 2));
+    for (const auto i_neighbor : neighbors) {
+        auto& neighbor = csr_nodes[i_neighbor];
+        neighbor.state = node.gate_data.truth_table >> truth_table_index & 1;
+        truth_table_index += amount_bits_per_result;
+    }
 }
 
-void CSRGraph::execute_gate_propagation(CSRNode& node, const NeighborRange<size_t> predecessors) const {
+void CSRGraph::execute_gate_propagation(const CSRNode& node, const NeighborRange<size_t> predecessors,
+                                        const NeighborRange<size_t> neighbors) {
     switch (node.gate_data.render_type) {
         case GateRenderType::PRERENDERED: {
-            execute_gate_prerendered_propagation(node, predecessors); // TODO : this only works for 1 output gate, find a way for multiple outputs (add an amount of outputs to the GateData structure ?)
+            execute_gate_prerendered_propagation(node, predecessors, neighbors);
             break;
         }
         default: {
@@ -109,7 +123,9 @@ void CSRGraph::propagate() {
         auto& node = csr_nodes[i_node];
         if (node.node_type == NodeType::INPUT) continue;
         const auto predecessors = get_predecessors(i_node);
+        const auto neighbors = get_neighbors(i_node);
         switch (node.node_type) {
+            case NodeType::GATE_OUTPUT:
             case NodeType::FIXED:
             case NodeType::INPUT: break;
             case NodeType::OUTPUT:
@@ -118,7 +134,7 @@ void CSRGraph::propagate() {
                 break;
             }
             case NodeType::GATE: {
-                execute_gate_propagation(node, predecessors);
+                execute_gate_propagation(node, predecessors, neighbors);
                 break;
             }
             default: {
