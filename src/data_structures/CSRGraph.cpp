@@ -83,9 +83,10 @@ void CSRGraph::execute_wire_propagation(CSRNode& node, const NeighborRange<size_
 void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const NeighborRange<size_t> predecessors,
                                                     const NeighborRange<size_t> neighbors) {
     if (node.gate_data.amount_outputs != neighbors.end() - neighbors.begin()) {
-        throw std::invalid_argument(
-            "Invalid amount of outputs. Expected " + std::to_string(node.gate_data.amount_outputs) + ", got " +
-            std::to_string(neighbors.end() - neighbors.begin()));
+        const std::string error_message = "Invalid amount of outputs. Expected " + std::to_string(node.gate_data.amount_outputs) + ", got " +
+            std::to_string(neighbors.end() - neighbors.begin());
+        std::cerr << error_message << std::endl;
+        throw std::invalid_argument(error_message);
     }
 
     size_t truth_table_index = 0;
@@ -99,6 +100,10 @@ void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const N
     const auto amount_bits_per_result = static_cast<size_t>(std::pow(predecessors.end() - predecessors.begin(), 2));
     for (const auto i_neighbor : neighbors) {
         auto& neighbor = csr_nodes[i_neighbor];
+        if (neighbor.node_type != NodeType::GATE_OUTPUT) {
+            std::cerr << "Neighbor for a gate that is not a GATE_OUTPUT" << std::endl;
+            throw std::invalid_argument("Neighbor for a gate that is not a GATE_OUTPUT");
+        }
         neighbor.state = node.gate_data.truth_table >> truth_table_index & 1;
         truth_table_index += amount_bits_per_result;
     }
