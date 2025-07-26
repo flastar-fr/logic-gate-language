@@ -1,7 +1,7 @@
 #include <string>
 #include <gtest/gtest.h>
 
-#include "scanner/Scanner.hpp"
+#include "language_processing/scanner/Scanner.hpp"
 
 TEST(ScannerTest, IncludeDefinition) {
     const std::vector expected_tokens = {

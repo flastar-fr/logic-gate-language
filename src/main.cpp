@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "scanner/Scanner.hpp"
+#include "language_processing/scanner/Scanner.hpp"
 #include "utils/io_manipulation.hpp"
 
 int main(const int argc, char* argv[]) {
