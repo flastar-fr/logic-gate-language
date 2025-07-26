@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "language_processing/preprocessor/Preprocessor.hpp"
 #include "language_processing/scanner/Scanner.hpp"
 #include "utils/io_manipulation.hpp"
 
@@ -18,7 +19,17 @@ int main(const int argc, char* argv[]) {
     auto scanner = Scanner(program);
     const auto tokens = scanner.scan();
 
+    std::cout << "Scanner : " << tokens.size() << std::endl;
     for (const auto& token : tokens) {
+        std::cout << token << std::endl;
+    }
+
+    auto preprocessor = Preprocessor(tokens);
+    const auto preprocessed_tokens = preprocessor.preprocess();
+
+    std::cout << std::endl;
+    std::cout << "Preprocessor : " << preprocessed_tokens.size() << std::endl;
+    for (const auto& token : preprocessed_tokens) {
         std::cout << token << std::endl;
     }
 
