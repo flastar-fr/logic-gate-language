@@ -91,14 +91,15 @@ void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const N
     }
 
     size_t truth_table_index = 0;
+    size_t shift = 0;
     for (const auto predecessor : predecessors) {
-        truth_table_index <<= 1;
         if (csr_nodes[predecessor].state) {
-            truth_table_index |= 1;
+            truth_table_index |= 1 << shift;
         }
+        ++shift;
     }
 
-    const auto amount_bits_per_result = static_cast<size_t>(std::pow(predecessors.end() - predecessors.begin(), 2));
+    const auto amount_bits_per_result = (predecessors.end() - predecessors.begin()) * (predecessors.end() - predecessors.begin());
     for (const auto i_neighbor : neighbors) {
         auto& neighbor = csr_nodes[i_neighbor];
         if (neighbor.node_type != NodeType::GATE_OUTPUT) {
@@ -192,6 +193,39 @@ void CSRGraph::construct_routing() noexcept {
 
     std::reverse(topological_order.begin(), topological_order.end());
     order_to_propagate = std::move(topological_order);
+}
+
+GateData CSRGraph::determine_graph_gate_data() noexcept {
+    const auto amount_inputs = inputs.size();
+    const auto amount_outputs = outputs.size();
+    uint32_t truth_table = 0;
+
+    const auto amount_bits = amount_inputs * amount_inputs;
+    for (int current_bit = 0; current_bit < amount_bits; ++current_bit) {
+        set_inputs_with_value(current_bit);
+        propagate();
+
+        for (size_t output_index = 0; output_index < outputs.size(); ++output_index) {
+            const auto& output = csr_nodes[outputs[output_index]];
+
+            const size_t bit_index = output_index * amount_bits + current_bit;
+
+            if (output.state) {
+                truth_table |= 1 << bit_index;
+            }
+        }
+    }
+
+    const auto gate_data = GateData(truth_table, amount_outputs, GateRenderType::PRERENDERED);
+    return gate_data;
+}
+
+void CSRGraph::set_inputs_with_value(size_t values_to_verify) noexcept {
+    for (const auto i_input : inputs) {
+        auto& input = csr_nodes[i_input];
+        input.state = values_to_verify & 1;
+        values_to_verify >>= 1;
+    }
 }
 
 NeighborRange<size_t> CSRGraph::get_neighbors(const size_t node) noexcept {
