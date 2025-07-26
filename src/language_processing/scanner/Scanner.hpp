@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include "Token.hpp"
+#include "language_processing/Token.hpp"
 
 class Scanner {
 public:

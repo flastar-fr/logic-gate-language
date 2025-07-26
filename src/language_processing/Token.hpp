@@ -3,7 +3,7 @@
 #include <string>
 #include <utility>
 
-#include "TokenType.hpp"
+#include "language_processing/TokenType.hpp"
 
 struct Token {
     explicit Token(const TokenType type) : type(type) {}
