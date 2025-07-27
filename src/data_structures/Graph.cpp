@@ -2,19 +2,26 @@
 
 #include <iostream>
 
+Graph::Graph() : Graph(1) {}
+
 Graph::Graph(const int size) {
-    nodes.resize(size, Node());
+    resize(size);
+}
+
+void Graph::add_node(const Node& node) {
+    if (node.index >= nodes.size()) {
+        resize((node.index + 1) * 2);
+    }
+
+    nodes[node.index].index = node.index;
+    nodes[node.index].node_type = node.node_type;
+    nodes[node.index].state = node.state;
+    nodes[node.index].gate_data = node.gate_data;
 }
 
 void Graph::add_edge(const Node& from, const Node& to) {
-    nodes[from.index].index = from.index;
-    nodes[from.index].node_type = from.node_type;
-    nodes[from.index].state = from.state;
-    nodes[from.index].gate_data = from.gate_data;
-    nodes[to.index].index = to.index;
-    nodes[to.index].node_type = to.node_type;
-    nodes[to.index].state = to.state;
-    nodes[to.index].gate_data = to.gate_data;
+    add_node(from);
+    add_node(to);
 
     nodes[from.index].neighbors.emplace_back(to.index);
     nodes[to.index].predecessors.emplace_back(from.index);
@@ -31,6 +38,12 @@ void Graph::print_graph() const {
         for (const auto& predecessor : nodes[i].predecessors) {
             std::cout << predecessor << " ";
         }
+        std::cout << nodes[i].node_type;
         std::cout << std::endl;
     }
+}
+
+[[nodiscard]] Node& Graph::operator[](const size_t index) noexcept {
+    if (index > nodes.size()) resize(index * 2);
+    return nodes[index];
 }

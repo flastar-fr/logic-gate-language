@@ -1,12 +1,12 @@
 #include "LogicGateLanguage.hpp"
 
-#include <iostream>
-
+#include "data_structures/CSRGraph.hpp"
+#include "parser/Parser.hpp"
 #include "preprocessor/Preprocessor.hpp"
 #include "scanner/Scanner.hpp"
 #include "utils/io_manipulation.hpp"
 
-LogicGateLanguage::LogicGateLanguage(const std::string& program_file) : program_file(program_file) {}
+LogicGateLanguage::LogicGateLanguage(std::string program_file) : program_file(std::move(program_file)) {}
 
 int LogicGateLanguage::execute() {
     std::vector<std::string> program;
@@ -19,25 +19,20 @@ int LogicGateLanguage::execute() {
     auto scanner = Scanner(program);
     tokens = scanner.scan();
 
-    std::cout << "Scanner : " << tokens.size() << std::endl;
-    for (const auto& token : tokens) {
-        std::cout << token << std::endl;
-    }
-
     auto preprocessor = Preprocessor(tokens);
     tokens = preprocessor.preprocess();
-
-    std::cout << std::endl;
-    std::cout << "Preprocessor : " << tokens.size() << std::endl;
-    for (const auto& token : tokens) {
-        std::cout << token << std::endl;
-    }
 
     create_graph();
 
     return 0;
 }
 
-void LogicGateLanguage::create_graph() {
+void LogicGateLanguage::create_graph() const {
+    auto parser = Parser(tokens);
+    const auto graph = parser.parse();
+    graph.print_graph();
 
+    auto graph_csr = CSRGraph(graph);
+    graph_csr.propagate();
+    graph_csr.print_states();
 }
