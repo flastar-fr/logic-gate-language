@@ -1,5 +1,7 @@
 #include "LogicGateLanguage.hpp"
 
+#include <iostream>
+
 #include "data_structures/CSRGraph.hpp"
 #include "parser/Parser.hpp"
 #include "preprocessor/Preprocessor.hpp"
@@ -32,6 +34,8 @@ void LogicGateLanguage::create_graph() const {
     const auto graph = parser.parse();
     graph.print_graph();
 
+    std::cout << std::endl;
+    std::cout << "Execution:" << std::endl;
     auto graph_csr = CSRGraph(graph);
     graph_csr.propagate();
     graph_csr.print_states();
