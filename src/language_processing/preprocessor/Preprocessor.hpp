@@ -9,6 +9,8 @@ public:
 
     std::vector<Token>& preprocess();
     void remove_comments();
+    void process_includes();
+    void remove_eols();
     [[nodiscard]] const std::vector<Token>& get_tokens() const { return tokens; }
 
 private:

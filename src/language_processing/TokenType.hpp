@@ -12,6 +12,7 @@ enum class TokenType {
     DOT,
     EQUAL,
     PIPE,
+    SEMICOLON,
 
     // symbols two chars
     RIGHT_ARROW,
@@ -26,9 +27,10 @@ enum class TokenType {
     EOL
 };
 
-inline std::ostream& operator<<(std::ostream& lhs, const TokenType& rhs) {
+inline std::string tostring(const TokenType& type) {
     std::string to_display;
-    switch (rhs) {
+
+    switch (type) {
         case TokenType::HASHTAG: {
             to_display = "HASHTAG";
             break;
@@ -69,6 +71,10 @@ inline std::ostream& operator<<(std::ostream& lhs, const TokenType& rhs) {
             to_display = "PIPE";
             break;
         }
+        case TokenType::SEMICOLON: {
+            to_display = "SEMICOLON";
+            break;
+        }
         case TokenType::RIGHT_ARROW: {
             to_display = "RIGHT_ARROW";
             break;
@@ -100,6 +106,10 @@ inline std::ostream& operator<<(std::ostream& lhs, const TokenType& rhs) {
         }
     }
 
-    lhs << to_display;
+    return to_display;
+}
+
+inline std::ostream& operator<<(std::ostream& lhs, const TokenType& rhs) {
+    lhs << tostring(rhs);
     return lhs;
 }

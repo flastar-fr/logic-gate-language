@@ -19,6 +19,7 @@ const std::unordered_map<std::string, TokenType> KEYCHARS = {
     {".", TokenType::DOT},
     {"=", TokenType::EQUAL},
     {"|", TokenType::PIPE},
+    {";", TokenType::SEMICOLON},
     {"->", TokenType::RIGHT_ARROW},
     {"//", TokenType::DOUBLE_SLASH},
     {"\n", TokenType::EOL}
