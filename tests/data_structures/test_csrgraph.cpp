@@ -93,8 +93,6 @@ TEST(CSRGraphTest, DetermineGraphGateDataNormalValue2) {
 
     const auto gate_data = graph_csr.determine_graph_gate_data();
 
-    std::cout << std::bitset<8>(gate_data.truth_table) << std::endl;
-
     EXPECT_EQ(test_truth_table, gate_data.truth_table);
 }
 
