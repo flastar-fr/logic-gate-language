@@ -37,6 +37,8 @@ CSRGraph::CSRGraph(Graph graph) {
     offsets.emplace_back(0);
     offsets_predecessors.emplace_back(0);
     for (auto& node : nodes) {
+        if (node.node_type == NodeType::UNDEFINED) continue;
+
         csr_nodes.emplace_back(node);
 
         const auto& neighbors = node.neighbors;
