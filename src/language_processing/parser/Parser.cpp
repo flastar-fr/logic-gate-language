@@ -11,6 +11,9 @@ Graph Parser::parse() {
         if (is_identifier(tokens[token_index], MAIN)) {
             parse_main();
         }
+        if (is_identifier(tokens[token_index], GATE)) {
+            parse_gate();
+        }
     }
 
     return current_graph;
@@ -121,4 +124,9 @@ void Parser::parse_assignment() {
     node.state = boolean_state;
 
     verify_token_type(tokens[token_index], TokenType::SEMICOLON);
+}
+
+void Parser::parse_gate() {
+    verify_token_identifier(tokens[token_index++], GATE);
+    // TODO : to implement
 }

@@ -31,12 +31,13 @@ public:
     void parse_declaration();
     void parse_edge_declaration();
     void parse_assignment();
+    void parse_gate();
 
 private:
     std::vector<Token> tokens;
     size_t current_node_id = 0;
     size_t token_index = 0;
     Graph current_graph;
-    std::unordered_map<std::string, Gate> gates;
+    std::unordered_map<std::string, Gate> gates; // TODO : add N-types and P-types
     std::unordered_map<std::string, size_t> nodes;
 };
