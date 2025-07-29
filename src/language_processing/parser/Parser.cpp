@@ -72,7 +72,7 @@ void Parser::parse_declaration() {
         declare_gate(node_type_s);
     }
 
-    auto& last_node = current_graph[nodes[node_type_s]];
+    auto& last_node = current_graph[nodes[tokens[token_index - 1].value]];
     switch (tokens[token_index].type) {
         case TokenType::RIGHT_ARROW: {
             parse_edge_declaration(last_node);
