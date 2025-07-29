@@ -165,6 +165,7 @@ void Parser::declare_gate(const std::string& node_type_s) {
     }
     current_graph.add_node(node_gate);
 
+    current_graph.resize(current_graph.get_nodes().size() + gate.inputs.size() + gate.outputs.size());
     const Node& node_gate_ref = current_graph[current_node_id - 1];
     for (int i = 0; i < gate.inputs.size(); ++i) {
         const auto node_input = Node(current_node_id++, NodeType::WIRE);
