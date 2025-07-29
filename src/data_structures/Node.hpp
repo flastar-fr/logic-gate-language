@@ -7,7 +7,8 @@
 
 struct Node {
     Node() = default;
-    explicit Node(const size_t index, const NodeType node_type) : index(index), node_type(node_type), gate_data() {}
+    explicit Node(const size_t index, const NodeType node_type) : index(index), node_type(node_type) {}
+    explicit Node(const size_t index, const NodeType node_type, GateData gate_data) : index(index), node_type(node_type), gate_data(gate_data) {}
 
     size_t index = 0;
     std::vector<size_t> neighbors;

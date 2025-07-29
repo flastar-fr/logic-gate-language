@@ -1,0 +1,12 @@
+#pragma once
+#include <unordered_map>
+
+#include "Gate.hpp"
+
+const auto and_gate = Gate({"op1", "op2"}, {"out"}, 0b1000, true);
+const auto or_gate = Gate({"op1", "op2"}, {"out"}, 0b1110, true);
+
+const std::unordered_map<std::string, Gate> DEFAULT_GATES ={
+    {"and", and_gate},
+    {"or", or_gate}
+};
