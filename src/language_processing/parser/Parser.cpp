@@ -165,7 +165,8 @@ std::vector<std::string> Parser::parse_inputs() {
     std::vector<std::string> inputs;
     do {
         inputs.push_back(tokens[token_index++].value);
-    } while (tokens[token_index++].type == TokenType::COMMA);
+    }
+    while (tokens[token_index++].type == TokenType::COMMA);
 
     verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
 
@@ -178,7 +179,8 @@ std::vector<std::string> Parser::parse_outputs() {
     std::vector<std::string> ouputs;
     do {
         ouputs.push_back(tokens[token_index++].value);
-    } while (tokens[token_index++].type == TokenType::COMMA);
+    }
+    while (tokens[token_index++].type == TokenType::COMMA);
 
     verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
 
@@ -194,7 +196,8 @@ uint32_t Parser::parse_table() {
     do {
         table <<= 1;
         if (BOOLEAN_VALUES.at(tokens[token_index++].value)) table |= 1;
-    } while (tokens[token_index++].type == TokenType::COMMA);
+    }
+    while (tokens[token_index++].type == TokenType::COMMA);
 
     verify_token_type(tokens[token_index - 1], TokenType::RIGHT_BRACE);
     verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
@@ -216,8 +219,10 @@ void Parser::declare_gate(const std::string& node_type_s) {
     gates_identifier.insert({tokens[token_index].value, gate});
     nodes.insert({tokens[token_index++].value, current_node_id});
     if (gate.prerendered) {
-        node_gate = Node(current_node_id++, NodeType::GATE, GateData(gate.table, gate.outputs.size(), GateRenderType::PRERENDERED));
-    } else {
+        node_gate = Node(current_node_id++, NodeType::GATE,
+                         GateData(gate.table, gate.outputs.size(), GateRenderType::PRERENDERED));
+    }
+    else {
         // TODO : to implement
     }
     current_graph.add_node(node_gate);

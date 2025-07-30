@@ -87,7 +87,8 @@ void CSRGraph::execute_wire_propagation(CSRNode& node, const NeighborRange<size_
 void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const NeighborRange<size_t> predecessors,
                                                     const NeighborRange<size_t> neighbors) {
     if (node.gate_data.amount_outputs != neighbors.end() - neighbors.begin()) {
-        const std::string error_message = "Invalid amount of outputs. Expected " + std::to_string(node.gate_data.amount_outputs) + ", got " +
+        const std::string error_message = "Invalid amount of outputs. Expected " + std::to_string(
+                node.gate_data.amount_outputs) + ", got " +
             std::to_string(neighbors.end() - neighbors.begin());
         throw_invalid_argument_error(error_message);
     }
@@ -101,7 +102,8 @@ void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const N
         ++shift;
     }
 
-    const auto amount_bits_per_result = (predecessors.end() - predecessors.begin()) * (predecessors.end() - predecessors.begin());
+    const auto amount_bits_per_result = (predecessors.end() - predecessors.begin()) * (predecessors.end() - predecessors
+        .begin());
     for (const auto i_neighbor : neighbors) {
         auto& neighbor = csr_nodes[i_neighbor];
         if (neighbor.node_type != NodeType::GATE_OUTPUT) {

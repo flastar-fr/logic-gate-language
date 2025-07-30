@@ -13,8 +13,10 @@ public:
 
     void print_graph() noexcept;
     void execute_wire_propagation(CSRNode& node, NeighborRange<size_t> predecessors) const;
-    void execute_gate_prerendered_propagation(const CSRNode& node, NeighborRange<size_t> predecessors, NeighborRange<size_t> neighbors);
-    void execute_gate_propagation(const CSRNode& node, NeighborRange<size_t> predecessors, NeighborRange<size_t> neighbors);
+    void execute_gate_prerendered_propagation(const CSRNode& node, NeighborRange<size_t> predecessors,
+                                              NeighborRange<size_t> neighbors);
+    void execute_gate_propagation(const CSRNode& node, NeighborRange<size_t> predecessors,
+                                  NeighborRange<size_t> neighbors);
     void propagate();
     void print_states() const noexcept;
     void visit_branch(std::unordered_set<size_t>& to_visit, std::stack<size_t>& current_branch,

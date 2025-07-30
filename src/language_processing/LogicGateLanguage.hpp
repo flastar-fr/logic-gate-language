@@ -5,7 +5,7 @@
 
 class LogicGateLanguage {
 public:
-    explicit LogicGateLanguage(std::string  program_file);
+    explicit LogicGateLanguage(std::string program_file);
 
     int execute();
     void create_graph() const;

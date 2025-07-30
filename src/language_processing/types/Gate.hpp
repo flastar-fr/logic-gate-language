@@ -40,4 +40,3 @@ inline size_t get_gate_index_node(const std::string& node_identifier, const Gate
     throw_invalid_argument_error("Node not found : " + node_identifier);
     return -1;
 }
-
