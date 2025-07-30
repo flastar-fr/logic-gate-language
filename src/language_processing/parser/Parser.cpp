@@ -193,7 +193,7 @@ uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::
     verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
 
     size_t amount_bits = 0;
-    const uint32_t table = parse_table_content(amount_bits);
+    const uint32_t table = parse_table_content(amount_bits, inputs.size(), outputs.size());
 
     const size_t amount_bits_per_output = inputs.size() * inputs.size();
     if (amount_bits_per_output * outputs.size() != amount_bits)
@@ -202,10 +202,10 @@ uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::
     return table;
 }
 
-uint32_t Parser::parse_table_content(size_t& amount_bits) {
+uint32_t Parser::parse_table_content(size_t& amount_bits, const size_t amount_inputs, const size_t amount_outputs) {
     switch (tokens[token_index].type) {
         case TokenType::BOOLEAN: return parse_table_content_short(amount_bits);
-        case TokenType::LEFT_PAREN: return parse_table_content_long(amount_bits);
+        case TokenType::LEFT_PAREN: return parse_table_content_long(amount_bits, amount_inputs, amount_outputs);
         default: throw_invalid_argument_error("Invalid token type " + tostring(tokens[token_index].type));
     }
     return -1; // prevent IDE warning for a branch without return
@@ -225,8 +225,50 @@ uint32_t Parser::parse_table_content_short(size_t& amount_bits) {
     return table;
 }
 
-uint32_t Parser::parse_table_content_long(size_t amount_bits) {
-    return 0;
+uint32_t Parser::parse_table_content_long(size_t& amount_bits, const size_t amount_inputs, const size_t amount_outputs) {
+    uint32_t table = 0;
+    size_t previous_inputs = -1;
+
+    do {
+        const auto& [inputs, outputs] = parse_table_content_long_item();
+        if (inputs != previous_inputs + 1)
+            throw_invalid_argument_error("Incorrect order for truth table");
+        ++previous_inputs;
+
+        amount_bits += amount_outputs;
+
+        const size_t spacing = amount_inputs * amount_inputs;
+
+        table <<= spacing;
+
+        table |= outputs;
+
+    } while (tokens[++token_index].type == TokenType::LEFT_PAREN);
+    verify_token_type(tokens[token_index++], TokenType::RIGHT_BRACE);
+    verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
+
+    return table;
+}
+
+std::pair<size_t, size_t> Parser::parse_table_content_long_item() {
+    verify_token_type(tokens[token_index++], TokenType::LEFT_PAREN);
+    size_t inputs = 0;
+    do {
+        inputs <<= 1;
+        if (BOOLEAN_VALUES.at(tokens[token_index++].value)) inputs |= 1;
+    } while (tokens[token_index++].type == TokenType::COMMA);
+
+    verify_token_type(tokens[token_index - 1], TokenType::PIPE);
+
+    size_t outputs = 0;
+    do {
+        outputs <<= 1;
+        if (BOOLEAN_VALUES.at(tokens[token_index++].value)) outputs |= 1;
+    } while (tokens[token_index++].type == TokenType::COMMA);
+
+    verify_token_type(tokens[--token_index], TokenType::RIGHT_PAREN);
+
+    return {inputs, outputs};
 }
 
 void Parser::declare_primitive(const std::string& node_type_s) {
