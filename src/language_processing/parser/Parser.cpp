@@ -1,5 +1,7 @@
 #include "Parser.hpp"
 
+#include <bitset>
+
 #include "language_processing/language_keywords_config.hpp"
 #include "language_processing/token_manipulation/token_verification.hpp"
 #include "utils/error_messages.hpp"
@@ -228,22 +230,25 @@ uint32_t Parser::parse_table_content_short(size_t& amount_bits) {
 uint32_t Parser::parse_table_content_long(size_t& amount_bits, const size_t amount_inputs, const size_t amount_outputs) {
     uint32_t table = 0;
     size_t previous_inputs = -1;
+    size_t current_line = 0;
 
     do {
-        const auto& [inputs, outputs] = parse_table_content_long_item();
+        auto& [inputs, outputs] = parse_table_content_long_item();
         if (inputs != previous_inputs + 1)
             throw_invalid_argument_error("Incorrect order for truth table");
         ++previous_inputs;
-
         amount_bits += amount_outputs;
 
-        const size_t spacing = amount_inputs * amount_inputs;
+        for (int i = 0; i < amount_outputs; ++i) {
+            const bool value = outputs & 1;
+            outputs >>= 1;
+            const size_t bit_index = current_line + amount_inputs * amount_inputs * i;
+            if (value) table |= 1 << bit_index;
+        }
 
-        table <<= spacing;
-
-        table |= outputs;
-
+        ++current_line;
     } while (tokens[++token_index].type == TokenType::LEFT_PAREN);
+
     verify_token_type(tokens[token_index++], TokenType::RIGHT_BRACE);
     verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
 
