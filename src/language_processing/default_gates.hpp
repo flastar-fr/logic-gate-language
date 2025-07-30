@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 
-#include "Gate.hpp"
+#include "language_processing/types/Gate.hpp"
 
 const auto and_gate = Gate({"op1", "op2"}, {"out"}, 0b1000, true);
 const auto or_gate = Gate({"op1", "op2"}, {"out"}, 0b1110, true);

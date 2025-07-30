@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "Token.hpp"
+#include "language_processing/types/Token.hpp"
 
 class LogicGateLanguage {
 public:

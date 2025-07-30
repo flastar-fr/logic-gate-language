@@ -1,9 +1,8 @@
 #pragma once
-#include <ostream>
 #include <string>
 #include <utility>
 
-#include "language_processing/TokenType.hpp"
+#include "TokenType.hpp"
 
 struct Token {
     explicit Token(const TokenType type) : type(type) {}

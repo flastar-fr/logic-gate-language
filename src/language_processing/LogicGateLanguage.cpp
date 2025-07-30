@@ -3,9 +3,9 @@
 #include <iostream>
 
 #include "data_structures/CSRGraph.hpp"
-#include "parser/Parser.hpp"
-#include "preprocessor/Preprocessor.hpp"
-#include "scanner/Scanner.hpp"
+#include "language_processing/parser/Parser.hpp"
+#include "language_processing/preprocessor/Preprocessor.hpp"
+#include "language_processing/scanner/Scanner.hpp"
 #include "utils/io_manipulation.hpp"
 
 LogicGateLanguage::LogicGateLanguage(std::string program_file) : program_file(std::move(program_file)) {}

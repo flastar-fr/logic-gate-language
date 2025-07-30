@@ -4,9 +4,9 @@
 
 #include "data_structures/Graph.hpp"
 #include "language_processing/default_gates.hpp"
-#include "language_processing/Gate.hpp"
+#include "language_processing/types/Gate.hpp"
 #include "language_processing/language_keywords_config.hpp"
-#include "language_processing/Token.hpp"
+#include "language_processing/types/Token.hpp"
 
 const std::unordered_map<std::string, NodeType> PRIMITIVE_TYPES = {
     {INPUT, NodeType::INPUT},

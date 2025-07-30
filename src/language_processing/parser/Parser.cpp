@@ -1,7 +1,7 @@
 #include "Parser.hpp"
 
 #include "language_processing/language_keywords_config.hpp"
-#include "language_processing/token_verification.hpp"
+#include "language_processing/token_manipulation/token_verification.hpp"
 #include "utils/error_messages.hpp"
 
 Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens), current_graph({}) {}

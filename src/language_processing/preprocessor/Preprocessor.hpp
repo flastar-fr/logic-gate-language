@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "language_processing/Token.hpp"
+#include "language_processing/types/Token.hpp"
 
 class Preprocessor {
 public:
