@@ -5,6 +5,8 @@
 #include "utils/error_messages.hpp"
 
 struct Gate {
+    Gate() = default;
+
     Gate(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs,
          const bool prerendered): inputs(inputs), outputs(outputs), prerendered(prerendered) {}
 

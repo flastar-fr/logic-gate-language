@@ -142,7 +142,64 @@ Node& Parser::parse_identifier_gate() {
 
 void Parser::parse_gate() {
     verify_token_identifier(tokens[token_index++], GATE);
-    // TODO : to implement
+    verify_token_type(tokens[token_index], TokenType::IDENTIFIER);
+    const auto& gate_identifier = tokens[token_index++].value;
+    verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
+    const std::vector<std::string> inputs = parse_inputs();
+    const std::vector<std::string> outputs = parse_outputs();
+
+    Gate gate;
+    if (is_identifier(tokens[token_index], TABLE)) {
+        const auto table = parse_table();
+        gate = Gate(inputs, outputs, table, true);
+    }
+
+    gates.insert({gate_identifier, gate});
+
+    verify_token_type(tokens[token_index], TokenType::RIGHT_BRACE);
+}
+
+std::vector<std::string> Parser::parse_inputs() {
+    verify_token_identifier(tokens[token_index++], INPUTS);
+    verify_token_type(tokens[token_index++], TokenType::COLON);
+    std::vector<std::string> inputs;
+    do {
+        inputs.push_back(tokens[token_index++].value);
+    } while (tokens[token_index++].type == TokenType::COMMA);
+
+    verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
+
+    return inputs;
+}
+
+std::vector<std::string> Parser::parse_outputs() {
+    verify_token_identifier(tokens[token_index++], OUTPUTS);
+    verify_token_type(tokens[token_index++], TokenType::COLON);
+    std::vector<std::string> ouputs;
+    do {
+        ouputs.push_back(tokens[token_index++].value);
+    } while (tokens[token_index++].type == TokenType::COMMA);
+
+    verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
+
+    return ouputs;
+}
+
+uint32_t Parser::parse_table() {
+    verify_token_identifier(tokens[token_index++], TABLE);
+    verify_token_type(tokens[token_index++], TokenType::COLON);
+    verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
+
+    uint32_t table = 0;
+    do {
+        table <<= 1;
+        if (BOOLEAN_VALUES.at(tokens[token_index++].value)) table |= 1;
+    } while (tokens[token_index++].type == TokenType::COMMA);
+
+    verify_token_type(tokens[token_index - 1], TokenType::RIGHT_BRACE);
+    verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
+
+    return table;
 }
 
 void Parser::declare_primitive(const std::string& node_type_s) {
