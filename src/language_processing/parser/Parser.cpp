@@ -193,6 +193,25 @@ uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::
     verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
 
     size_t amount_bits = 0;
+    const uint32_t table = parse_table_content(amount_bits);
+
+    const size_t amount_bits_per_output = inputs.size() * inputs.size();
+    if (amount_bits_per_output * outputs.size() != amount_bits)
+        throw_invalid_argument_error("Invalid amount of bits for truth table. Expected " + std::to_string(amount_bits_per_output * outputs.size()) + ", got " + std::to_string(amount_bits));
+
+    return table;
+}
+
+uint32_t Parser::parse_table_content(size_t& amount_bits) {
+    switch (tokens[token_index].type) {
+        case TokenType::BOOLEAN: return parse_table_content_short(amount_bits);
+        case TokenType::LEFT_PAREN: return parse_table_content_long(amount_bits);
+        default: throw_invalid_argument_error("Invalid token type " + tostring(tokens[token_index].type));
+    }
+    return -1; // prevent IDE warning for a branch without return
+}
+
+uint32_t Parser::parse_table_content_short(size_t& amount_bits) {
     uint32_t table = 0;
     do {
         table <<= 1;
@@ -200,14 +219,14 @@ uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::
         ++amount_bits;
     } while (tokens[token_index++].type == TokenType::COMMA);
 
-    const size_t amount_bits_per_output = inputs.size() * inputs.size();
-    if (amount_bits_per_output * outputs.size() != amount_bits)
-        throw_invalid_argument_error("Invalid amount of bits for truth table. Expected " + std::to_string(amount_bits_per_output * outputs.size()) + ", got " + std::to_string(amount_bits));
-
     verify_token_type(tokens[token_index - 1], TokenType::RIGHT_BRACE);
     verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
 
     return table;
+}
+
+uint32_t Parser::parse_table_content_long(size_t amount_bits) {
+    return 0;
 }
 
 void Parser::declare_primitive(const std::string& node_type_s) {
