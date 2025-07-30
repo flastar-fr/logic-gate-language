@@ -150,7 +150,7 @@ void Parser::parse_gate() {
 
     Gate gate;
     if (is_identifier(tokens[token_index], TABLE)) {
-        const auto table = parse_table();
+        const auto table = parse_table(inputs, outputs);
         gate = Gate(inputs, outputs, table, true);
     }
 
@@ -187,17 +187,22 @@ std::vector<std::string> Parser::parse_outputs() {
     return ouputs;
 }
 
-uint32_t Parser::parse_table() {
+uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {
     verify_token_identifier(tokens[token_index++], TABLE);
     verify_token_type(tokens[token_index++], TokenType::COLON);
     verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
 
+    size_t amount_bits = 0;
     uint32_t table = 0;
     do {
         table <<= 1;
         if (BOOLEAN_VALUES.at(tokens[token_index++].value)) table |= 1;
-    }
-    while (tokens[token_index++].type == TokenType::COMMA);
+        ++amount_bits;
+    } while (tokens[token_index++].type == TokenType::COMMA);
+
+    const size_t amount_bits_per_output = inputs.size() * inputs.size();
+    if (amount_bits_per_output * outputs.size() != amount_bits)
+        throw_invalid_argument_error("Invalid amount of bits for truth table. Expected " + std::to_string(amount_bits_per_output * outputs.size()) + ", got " + std::to_string(amount_bits));
 
     verify_token_type(tokens[token_index - 1], TokenType::RIGHT_BRACE);
     verify_token_type(tokens[token_index++], TokenType::SEMICOLON);

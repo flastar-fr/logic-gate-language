@@ -37,7 +37,7 @@ public:
     void parse_gate();
     std::vector<std::string> parse_inputs();
     std::vector<std::string> parse_outputs();
-    uint32_t parse_table();
+    uint32_t parse_table(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
     void declare_primitive(const std::string& node_type_s);
     void declare_gate(const std::string& node_type_s);
 
