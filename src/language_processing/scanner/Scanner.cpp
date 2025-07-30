@@ -39,6 +39,7 @@ std::vector<Token> Scanner::scan() {
     for (const auto& line : program) {
         scan_line(line);
         add_token(EOL_TOKEN);
+        ++current_line;
     }
     return tokens;
 }
@@ -62,21 +63,21 @@ void Scanner::scan_line(const std::string& line) {
 
 void Scanner::check_token() {
     if (!is_keychar(current_token) || are_double_quotes_open) return;
-    add_token(Token(KEYCHARS.at(current_token)));
+    add_token(Token(KEYCHARS.at(current_token), current_line));
 }
 
 void Scanner::check_literal() {
     if (current_token.empty() || are_double_quotes_open) return;
 
     if (current_token[0] == QUOTE_CHAR && current_token[current_token.size() - 1] == QUOTE_CHAR) {
-        add_token(Token(TokenType::STRING, current_token.substr(1, current_token.size() - 2)));
+        add_token(Token(TokenType::STRING, current_token.substr(1, current_token.size() - 2), current_line));
         return;
     }
     if (BOOLEAN_VALUES.count(current_token)) {
-        add_token(Token(TokenType::BOOLEAN, current_token));
+        add_token(Token(TokenType::BOOLEAN, current_token, current_line));
         return;
     }
-    add_token(Token(TokenType::IDENTIFIER, current_token));
+    add_token(Token(TokenType::IDENTIFIER, current_token, current_line));
 }
 
 void Scanner::add_token(const Token& token) {

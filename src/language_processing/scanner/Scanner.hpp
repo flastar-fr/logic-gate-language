@@ -20,4 +20,5 @@ private:
     std::vector<Token> tokens;
     std::string current_token;
     bool are_double_quotes_open = false;
+    size_t current_line = 1;
 };
