@@ -155,16 +155,7 @@ void Parser::parse_gate() {
     const std::vector<std::string> inputs = parse_inputs();
     const std::vector<std::string> outputs = parse_outputs();
 
-    Gate gate;
-    if (is_identifier(tokens[token_index], TABLE)) {
-        const auto table = parse_table(inputs, outputs);
-        gate = Gate(inputs, outputs, table, true);
-    } else if (is_identifier(tokens[token_index], CIRCUIT) && is_prerendered) {
-        const auto graph = parse_prerendered_graph(inputs, outputs);
-        auto graph_csr = CSRGraph(graph);
-        const auto table = graph_csr.determine_graph_gate_data();
-        gate = Gate(inputs, outputs, table.truth_table, true);
-    }
+    auto gate = parse_gate_content(is_prerendered, inputs, outputs);
 
     gates.insert({gate_identifier, gate});
 
@@ -197,6 +188,22 @@ std::vector<std::string> Parser::parse_outputs() {
     verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
 
     return ouputs;
+}
+
+Gate Parser::parse_gate_content(const bool is_prerendered, const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {
+    if (is_identifier(tokens[token_index], TABLE)) {
+        const auto table = parse_table(inputs, outputs);
+        return {inputs, outputs, table, true};
+    }
+    if (is_identifier(tokens[token_index], CIRCUIT) && is_prerendered) {
+        const auto graph = parse_prerendered_graph(inputs, outputs);
+        auto graph_csr = CSRGraph(graph);
+        const auto table = graph_csr.determine_graph_gate_data();
+        return {inputs, outputs, table.truth_table, true};
+    }
+
+    throw_invalid_argument_error("Invalid gate definition : pre render " + std::to_string(is_prerendered) + ". Keyword : " + tokens[token_index].value);
+    return {};
 }
 
 uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {

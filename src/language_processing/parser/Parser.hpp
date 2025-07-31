@@ -37,6 +37,7 @@ public:
     void parse_gate();
     std::vector<std::string> parse_inputs();
     std::vector<std::string> parse_outputs();
+    Gate parse_gate_content(bool is_prerendered, const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
     uint32_t parse_table(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
     uint32_t parse_table_content(size_t& amount_bits, size_t amount_inputs, size_t amount_outputs);
     uint32_t parse_table_content_short(size_t& amount_bits);
