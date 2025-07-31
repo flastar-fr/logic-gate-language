@@ -8,7 +8,7 @@ const auto or_gate = Gate({"op1", "op2"}, {"out"}, 0b1110, true);
 const auto not_gate = Gate({"in"}, {"out"}, 0b01, true);
 
 const std::unordered_map<std::string, Gate> DEFAULT_GATES = {
-    {"and", and_gate},
-    {"or", or_gate},
-    {"not", not_gate}
+    {"AND", and_gate},
+    {"OR", or_gate},
+    {"NOT", not_gate}
 };
