@@ -1,7 +1,6 @@
 #include "Parser.hpp"
 
-#include <bitset>
-
+#include "data_structures/CSRGraph.hpp"
 #include "language_processing/language_keywords_config.hpp"
 #include "language_processing/token_manipulation/token_verification.hpp"
 #include "utils/error_messages.hpp"
@@ -143,7 +142,13 @@ Node& Parser::parse_identifier_gate() {
 }
 
 void Parser::parse_gate() {
+    bool is_prerendered = false;
+
     verify_token_identifier(tokens[token_index++], GATE);
+    if (is_identifier(tokens[token_index], PRERENDER)) {
+        ++token_index;
+        is_prerendered = true;
+    }
     verify_token_type(tokens[token_index], TokenType::IDENTIFIER);
     const auto& gate_identifier = tokens[token_index++].value;
     verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
@@ -154,6 +159,11 @@ void Parser::parse_gate() {
     if (is_identifier(tokens[token_index], TABLE)) {
         const auto table = parse_table(inputs, outputs);
         gate = Gate(inputs, outputs, table, true);
+    } else if (is_identifier(tokens[token_index], CIRCUIT) && is_prerendered) {
+        const auto graph = parse_prerendered_graph(inputs, outputs);
+        auto graph_csr = CSRGraph(graph);
+        const auto table = graph_csr.determine_graph_gate_data();
+        gate = Gate(inputs, outputs, table.truth_table, true);
     }
 
     gates.insert({gate_identifier, gate});
@@ -276,6 +286,42 @@ std::pair<size_t, size_t> Parser::parse_table_content_long_item() {
     return {inputs, outputs};
 }
 
+Graph Parser::parse_prerendered_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {
+    verify_token_identifier(tokens[token_index++], CIRCUIT);
+    verify_token_type(tokens[token_index++], TokenType::COLON);
+
+    verify_token_type(tokens[token_index], TokenType::LEFT_BRACE);
+    const std::vector<Token> circuit_tokens = extract_block();
+    auto parser = Parser(circuit_tokens);
+    for (const auto& input : inputs) {
+        parser.add_input(input);
+    }
+    for (const auto& output : outputs) {
+        parser.add_output(output);
+    }
+    parser.parse_program_block();
+
+    return parser.get_graph();
+}
+
+std::vector<Token> Parser::extract_block() {
+    verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
+
+    std::vector block = {Token(TokenType::LEFT_BRACE)};
+    size_t current_brace_level = 1;
+    while (current_brace_level > 0) {
+        block.push_back(tokens[token_index]);
+        if (is_node_type(tokens[token_index], TokenType::LEFT_BRACE)) ++current_brace_level;
+        else if (is_node_type(tokens[token_index], TokenType::RIGHT_BRACE)) --current_brace_level;
+        ++token_index;
+    }
+
+    verify_token_type(tokens[token_index - 1], TokenType::RIGHT_BRACE);
+    verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
+
+    return block;
+}
+
 void Parser::declare_primitive(const std::string& node_type_s) {
     const auto node_type = PRIMITIVE_TYPES.at(node_type_s);
     nodes.insert({tokens[token_index++].value, current_node_id});
@@ -309,4 +355,16 @@ void Parser::declare_gate(const std::string& node_type_s) {
         const auto node_output = Node(current_node_id++, NodeType::GATE_OUTPUT);
         current_graph.add_edge(node_gate_ref, node_output);
     }
+}
+
+void Parser::add_input(const std::string& identifier) {
+    nodes.insert({identifier, current_node_id});
+    const auto node = Node(current_node_id++, NodeType::INPUT);
+    current_graph.add_node(node);
+}
+
+void Parser::add_output(const std::string& identifier) {
+    nodes.insert({identifier, current_node_id});
+    const auto node = Node(current_node_id++, NodeType::OUTPUT);
+    current_graph.add_node(node);
 }
