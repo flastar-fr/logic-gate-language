@@ -5,6 +5,27 @@
 #include "language_processing/token_manipulation/token_verification.hpp"
 #include "utils/error_messages.hpp"
 
+void remap_node_indexes(Node& node, const std::unordered_map<size_t, size_t>& index_map) {
+    node.index = index_map.at(node.index);
+    for (auto& neighbor : node.neighbors) {
+        neighbor = index_map.at(neighbor);
+    }
+    for (auto& predecessor : node.predecessors) {
+        predecessor = index_map.at(predecessor);
+    }
+}
+
+void register_io(Gate& gate, Node& node, size_t& current_input, size_t& current_output, const std::unordered_map<size_t, size_t>& index_map) {
+    if (node.node_type == NodeType::INPUT) {
+        node.node_type = NodeType::WIRE;
+        gate.inputs[gate.inputs_order[current_input++]] = index_map.at(node.index);
+    }
+    if (node.node_type == NodeType::OUTPUT) {
+        node.node_type = NodeType::WIRE;
+        gate.outputs[gate.outputs_order[current_output++]] = index_map.at(node.index);
+    }
+}
+
 Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens), current_graph({}) {}
 
 Graph Parser::parse() {
@@ -135,8 +156,7 @@ Node& Parser::parse_identifier_gate() {
     verify_token_type(tokens[token_index++], TokenType::DOT);
     verify_token_type(tokens[token_index], TokenType::IDENTIFIER);
     const auto node_gate_aimed = tokens[token_index++].value;
-    const auto gate_index = nodes.at(gate_identifier);
-    const auto node_index = get_gate_index_node(node_gate_aimed, gate) + gate_index + 1;
+    const auto node_index = get_gate_index_node(node_gate_aimed, gate);
     Node& node = current_graph[node_index];
     return node;
 }
@@ -196,10 +216,14 @@ Gate Parser::parse_gate_content(const bool is_prerendered, const std::vector<std
         return {inputs, outputs, table, true};
     }
     if (is_identifier(tokens[token_index], CIRCUIT) && is_prerendered) {
-        const auto graph = parse_prerendered_graph(inputs, outputs);
+        const auto graph = parse_gate_graph(inputs, outputs);
         auto graph_csr = CSRGraph(graph);
         const auto table = graph_csr.determine_graph_gate_data();
         return {inputs, outputs, table.truth_table, true};
+    }
+    if (is_identifier(tokens[token_index], CIRCUIT) && !is_prerendered) {
+        const auto graph = parse_gate_graph(inputs, outputs);
+        return {inputs, outputs, graph, false};
     }
 
     throw_invalid_argument_error("Invalid gate definition : pre render " + std::to_string(is_prerendered) + ". Keyword : " + tokens[token_index].value);
@@ -293,7 +317,7 @@ std::pair<size_t, size_t> Parser::parse_table_content_long_item() {
     return {inputs, outputs};
 }
 
-Graph Parser::parse_prerendered_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {
+Graph Parser::parse_gate_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {
     verify_token_identifier(tokens[token_index++], CIRCUIT);
     verify_token_type(tokens[token_index++], TokenType::COLON);
 
@@ -337,30 +361,52 @@ void Parser::declare_primitive(const std::string& node_type_s) {
 }
 
 void Parser::declare_gate(const std::string& node_type_s) {
-    const auto gate = gates.at(node_type_s);
-    Node node_gate;
+    auto gate = gates.at(node_type_s);
 
     gates_identifier.insert({tokens[token_index].value, gate});
+    auto& gate_ref = gates_identifier.at(tokens[token_index].value);
     nodes.insert({tokens[token_index++].value, current_node_id});
-    if (gate.prerendered) {
-        node_gate = Node(current_node_id++, NodeType::GATE,
-                         GateData(gate.table, gate.outputs.size(), GateRenderType::PRERENDERED));
+    if (!gate.prerendered) {
+        declare_non_prerender_gate(gate_ref);
+        return;
     }
-    else {
-        // TODO : to implement
-    }
+    const auto node_gate = Node(current_node_id++, NodeType::GATE,
+                          GateData(gate.table, gate.outputs.size(), GateRenderType::PRERENDERED));
     current_graph.add_node(node_gate);
 
     current_graph.resize(current_graph.get_nodes().size() + gate.inputs.size() + gate.outputs.size());
     const Node& node_gate_ref = current_graph[current_node_id - 1];
-    for (int i = 0; i < gate.inputs.size(); ++i) {
+    for (auto& [key, value] : gate_ref.inputs) {
+        value = current_node_id;
         const auto node_input = Node(current_node_id++, NodeType::WIRE);
         current_graph.add_edge(node_input, node_gate_ref);
     }
-
-    for (int i = 0; i < gate.outputs.size(); ++i) {
+    for (auto& [key, value] : gate_ref.outputs) {
+        value = current_node_id;
         const auto node_output = Node(current_node_id++, NodeType::GATE_OUTPUT);
         current_graph.add_edge(node_gate_ref, node_output);
+    }
+}
+
+void Parser::declare_non_prerender_gate(Gate& gate) {
+    const auto& nodes_gate = gate.graph.get_nodes();
+    std::unordered_map<size_t, size_t> index_map;
+    for (const auto& node : nodes_gate) {
+        if (node.node_type == NodeType::UNDEFINED) continue;
+        index_map.insert({node.index, current_node_id++});
+    }
+
+    size_t current_input = 0;
+    size_t current_output = 0;
+    for (const auto& node : nodes_gate) {
+        if (node.node_type == NodeType::UNDEFINED) continue;
+
+        auto new_node = node;
+        register_io(gate, new_node, current_input, current_output, index_map);
+
+        remap_node_indexes(new_node, index_map);
+
+        current_graph.add_node(new_node);
     }
 }
 

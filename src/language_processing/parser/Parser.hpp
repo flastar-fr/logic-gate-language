@@ -43,11 +43,11 @@ public:
     uint32_t parse_table_content_short(size_t& amount_bits);
     uint32_t parse_table_content_long(size_t& amount_bits, size_t amount_inputs, size_t amount_outputs);
     std::pair<size_t, size_t> parse_table_content_long_item();
-    Graph parse_prerendered_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
+    Graph parse_gate_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
     std::vector<Token> extract_block();
     void declare_primitive(const std::string& node_type_s);
     void declare_gate(const std::string& node_type_s);
-    void increment_current_node_id() { ++current_node_id; }
+    void declare_non_prerender_gate(Gate& gate);
     void add_input(const std::string& identifier);
     void add_output(const std::string& identifier);
     [[nodiscard]] Graph& get_graph() { return current_graph; }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 #include "GateData.hpp"
 #include "NodeType.hpp"
@@ -19,3 +20,17 @@ struct Node {
     bool state = false;
     GateData gate_data{};
 };
+
+inline std::ostream& operator<<(std::ostream& lhs, const Node& rhs) {
+    lhs << "Node " << rhs.index << ": ";
+    lhs << "Neighbors: ";
+    for (const auto& neighbor : rhs.neighbors) {
+        lhs << neighbor << " ";
+    }
+    lhs << " Predecessors: ";
+    for (const auto& predecessor : rhs.predecessors) {
+        lhs << predecessor << " ";
+    }
+    lhs << " Type: " << rhs.node_type;
+    return lhs;
+}

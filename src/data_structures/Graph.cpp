@@ -17,6 +17,8 @@ void Graph::add_node(const Node& node) {
     nodes[node.index].node_type = node.node_type;
     nodes[node.index].state = node.state;
     nodes[node.index].gate_data = node.gate_data;
+    nodes[node.index].neighbors = node.neighbors;
+    nodes[node.index].predecessors = node.predecessors;
 }
 
 void Graph::add_edge(const Node& from, const Node& to) {
@@ -28,18 +30,8 @@ void Graph::add_edge(const Node& from, const Node& to) {
 }
 
 void Graph::print_graph() const {
-    for (size_t i = 0; i < nodes.size(); ++i) {
-        std::cout << "Node " << i << ": ";
-        std::cout << "Neighbors: ";
-        for (const auto& neighbor : nodes[i].neighbors) {
-            std::cout << neighbor << " ";
-        }
-        std::cout << "Predecessors: ";
-        for (const auto& predecessor : nodes[i].predecessors) {
-            std::cout << predecessor << " ";
-        }
-        std::cout << nodes[i].node_type;
-        std::cout << std::endl;
+    for (const auto& node : nodes) {
+        std::cout << node << std::endl;
     }
 }
 
