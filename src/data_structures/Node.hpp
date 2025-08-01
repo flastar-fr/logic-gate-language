@@ -23,14 +23,14 @@ struct Node {
 
 inline std::ostream& operator<<(std::ostream& lhs, const Node& rhs) {
     lhs << "Node " << rhs.index << ": ";
-    lhs << "Neighbors: ";
+    lhs << "Neighbors: { ";
     for (const auto& neighbor : rhs.neighbors) {
         lhs << neighbor << " ";
     }
-    lhs << " Predecessors: ";
+    lhs << "} Predecessors: { ";
     for (const auto& predecessor : rhs.predecessors) {
         lhs << predecessor << " ";
     }
-    lhs << " Type: " << rhs.node_type;
+    lhs << "} Type: " << rhs.node_type;
     return lhs;
 }
