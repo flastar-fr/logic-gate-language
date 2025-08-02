@@ -42,6 +42,7 @@ public:
     uint32_t parse_table_content(size_t& amount_bits, size_t amount_inputs, size_t amount_outputs);
     uint32_t parse_table_content_short(size_t& amount_bits);
     uint32_t parse_table_content_long(size_t& amount_bits, size_t amount_inputs, size_t amount_outputs);
+    uint32_t parse_table_content_long_truth_table(size_t& amount_bits, size_t amount_inputs, size_t amount_outputs);
     std::pair<size_t, size_t> parse_table_content_long_item();
     Graph parse_gate_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
     std::vector<Token> extract_block();

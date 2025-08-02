@@ -15,7 +15,8 @@ void remap_node_indexes(Node& node, const std::unordered_map<size_t, size_t>& in
     }
 }
 
-void register_io(Gate& gate, Node& node, size_t& current_input, size_t& current_output, const std::unordered_map<size_t, size_t>& index_map) {
+void register_io(Gate& gate, Node& node, size_t& current_input, size_t& current_output,
+                 const std::unordered_map<size_t, size_t>& index_map) {
     if (node.node_type == NodeType::INPUT) {
         node.node_type = NodeType::WIRE;
         gate.inputs[gate.inputs_order[current_input++]] = index_map.at(node.index);
@@ -188,8 +189,7 @@ std::vector<std::string> Parser::parse_inputs() {
     std::vector<std::string> inputs;
     do {
         inputs.push_back(tokens[token_index++].value);
-    }
-    while (tokens[token_index++].type == TokenType::COMMA);
+    } while (tokens[token_index++].type == TokenType::COMMA);
 
     verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
 
@@ -202,15 +202,15 @@ std::vector<std::string> Parser::parse_outputs() {
     std::vector<std::string> ouputs;
     do {
         ouputs.push_back(tokens[token_index++].value);
-    }
-    while (tokens[token_index++].type == TokenType::COMMA);
+    } while (tokens[token_index++].type == TokenType::COMMA);
 
     verify_token_type(tokens[token_index - 1], TokenType::SEMICOLON);
 
     return ouputs;
 }
 
-Gate Parser::parse_gate_content(const bool is_prerendered, const std::vector<std::string>& inputs, const std::vector<std::string>& outputs) {
+Gate Parser::parse_gate_content(const bool is_prerendered, const std::vector<std::string>& inputs,
+                                const std::vector<std::string>& outputs) {
     if (is_identifier(tokens[token_index], TABLE)) {
         const auto table = parse_table(inputs, outputs);
         return {inputs, outputs, table, true};
@@ -226,7 +226,9 @@ Gate Parser::parse_gate_content(const bool is_prerendered, const std::vector<std
         return {inputs, outputs, graph, false};
     }
 
-    throw_invalid_argument_error("Invalid gate definition : pre render " + std::to_string(is_prerendered) + ". Keyword : " + tokens[token_index].value);
+    throw_invalid_argument_error(
+        "Invalid gate definition : pre render " + std::to_string(is_prerendered) + ". Keyword : " + tokens[token_index].
+        value);
     return {};
 }
 
@@ -240,7 +242,9 @@ uint32_t Parser::parse_table(const std::vector<std::string>& inputs, const std::
 
     const size_t amount_bits_per_output = inputs.size() * inputs.size();
     if (amount_bits_per_output * outputs.size() != amount_bits)
-        throw_invalid_argument_error("Invalid amount of bits for truth table. Expected " + std::to_string(amount_bits_per_output * outputs.size()) + ", got " + std::to_string(amount_bits));
+        throw_invalid_argument_error(
+            "Invalid amount of bits for truth table. Expected " + std::to_string(
+                amount_bits_per_output * outputs.size()) + ", got " + std::to_string(amount_bits));
 
     return table;
 }
@@ -268,7 +272,8 @@ uint32_t Parser::parse_table_content_short(size_t& amount_bits) {
     return table;
 }
 
-uint32_t Parser::parse_table_content_long(size_t& amount_bits, const size_t amount_inputs, const size_t amount_outputs) {
+uint32_t Parser::parse_table_content_long_truth_table(size_t& amount_bits, const size_t amount_inputs,
+                                                      const size_t amount_outputs) {
     uint32_t table = 0;
     size_t previous_inputs = -1;
     size_t current_line = 0;
@@ -289,6 +294,13 @@ uint32_t Parser::parse_table_content_long(size_t& amount_bits, const size_t amou
 
         ++current_line;
     } while (tokens[++token_index].type == TokenType::LEFT_PAREN);
+
+    return table;
+}
+
+uint32_t Parser::parse_table_content_long(size_t& amount_bits, const size_t amount_inputs,
+                                          const size_t amount_outputs) {
+    const uint32_t table = parse_table_content_long_truth_table(amount_bits, amount_inputs, amount_outputs);
 
     verify_token_type(tokens[token_index++], TokenType::RIGHT_BRACE);
     verify_token_type(tokens[token_index++], TokenType::SEMICOLON);
