@@ -370,8 +370,13 @@ void Parser::declare_gate(const std::string& node_type_s) {
         declare_non_prerender_gate(gate_ref);
         return;
     }
+
+    declare_prerender_gate(gate, gate_ref);
+}
+
+void Parser::declare_prerender_gate(const Gate& gate, Gate& gate_ref) {
     const auto node_gate = Node(current_node_id++, NodeType::GATE,
-                          GateData(gate.table, gate.outputs.size(), GateRenderType::PRERENDERED));
+                                GateData(gate.table, gate.outputs.size(), GateRenderType::PRERENDERED));
     current_graph.add_node(node_gate);
 
     current_graph.resize(current_graph.get_nodes().size() + gate.inputs.size() + gate.outputs.size());

@@ -46,6 +46,8 @@ public:
     Graph parse_gate_graph(const std::vector<std::string>& inputs, const std::vector<std::string>& outputs);
     std::vector<Token> extract_block();
     void declare_primitive(const std::string& node_type_s);
+    void declare_prerender_gate(const std::unordered_map<std::string, Gate>::mapped_type& gate,
+                                std::unordered_map<std::string, Gate>::mapped_type& gate_ref);
     void declare_gate(const std::string& node_type_s);
     void declare_non_prerender_gate(Gate& gate);
     void add_input(const std::string& identifier);
