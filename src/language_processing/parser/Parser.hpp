@@ -30,6 +30,7 @@ public:
     void parse_program_block();
     void parse_line();
     void parse_declaration();
+    void verify_if_declaration_ended(Node& last_node);
     void parse_edge_declaration(const Node& node_left);
     void parse_assignment(Node& node);
     Node& parse_identifier();

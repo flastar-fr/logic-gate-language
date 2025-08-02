@@ -96,6 +96,12 @@ void Parser::parse_declaration() {
     }
 
     auto& last_node = current_graph[nodes[tokens[token_index - 1].value]];
+    verify_if_declaration_ended(last_node);
+
+    verify_token_type(tokens[token_index], TokenType::SEMICOLON);
+}
+
+void Parser::verify_if_declaration_ended(Node& last_node) {
     switch (tokens[token_index].type) {
         case TokenType::RIGHT_ARROW: {
             parse_edge_declaration(last_node);
@@ -110,8 +116,6 @@ void Parser::parse_declaration() {
             throw_invalid_argument_error("Invalid node type " + tostring(tokens[token_index].type));
         }
     }
-
-    verify_token_type(tokens[token_index], TokenType::SEMICOLON);
 }
 
 void Parser::parse_edge_declaration(const Node& node_left) {
