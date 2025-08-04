@@ -18,7 +18,7 @@ int LogicGateLanguage::execute() {
         return 2;
     }
 
-    auto preprocessor = Preprocessor(program, program_file.parent_path());
+    auto preprocessor = Preprocessor(program, program_file.parent_path(), program_file);
     const auto lines = preprocessor.preprocess();
 
     auto scanner = Scanner(lines);
