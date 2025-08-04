@@ -66,7 +66,7 @@ void Preprocessor::process_includes() {
     }
 }
 
-bool Preprocessor::process_include(const std::string& include_line, std::vector<std::string>& output_lines) {
+bool Preprocessor::process_include(const std::string& include_line, std::vector<std::string>& processed_lines) {
     const auto file_name = extract_file_name(include_line);
     const std::filesystem::path complete_path = include_path / file_name;
     if (included_files.count(complete_path)) return false;
@@ -75,7 +75,7 @@ bool Preprocessor::process_include(const std::string& include_line, std::vector<
     const bool is_open = read_file(complete_path, included_lines);
     if (!is_open) throw_invalid_argument_error("File cannot be opened");
 
-    output_lines.insert(output_lines.end(), included_lines.begin(), included_lines.end());
+    processed_lines.insert(processed_lines.end(), included_lines.begin(), included_lines.end());
     included_files.insert(complete_path);
     return true;
 }
