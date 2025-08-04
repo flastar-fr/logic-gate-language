@@ -8,7 +8,7 @@
 #include "language_processing/scanner/Scanner.hpp"
 #include "utils/io_manipulation.hpp"
 
-LogicGateLanguage::LogicGateLanguage(std::string program_file) : program_file(std::move(program_file)) {}
+LogicGateLanguage::LogicGateLanguage(const std::string& program_file) : program_file(program_file) {}
 
 int LogicGateLanguage::execute() {
     std::vector<std::string> program;

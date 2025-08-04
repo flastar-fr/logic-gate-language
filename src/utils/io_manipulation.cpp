@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-bool read_file(const std::string& file_path, std::vector<std::string>& result) {
+bool read_file(const std::filesystem::path& file_path, std::vector<std::string>& result) {
     if (std::ifstream file(file_path); file.is_open()) {
         std::string line;
 
