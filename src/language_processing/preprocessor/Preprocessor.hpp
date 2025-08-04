@@ -1,18 +1,17 @@
 #pragma once
+#include <filesystem>
 #include <vector>
-
-#include "language_processing/types/Token.hpp"
 
 class Preprocessor {
 public:
-    explicit Preprocessor(const std::vector<Token>& tokens);
+    explicit Preprocessor(const std::vector<std::string>& lines, std::filesystem::path include_path);
 
-    std::vector<Token>& preprocess();
+    std::vector<std::string>& preprocess();
     void remove_comments();
     void process_includes();
-    void remove_eols();
-    [[nodiscard]] const std::vector<Token>& get_tokens() const { return tokens; }
 
 private:
-    std::vector<Token> tokens;
+    std::vector<std::string> lines;
+    std::vector<std::string> included_files;
+    std::filesystem::path include_path;
 };

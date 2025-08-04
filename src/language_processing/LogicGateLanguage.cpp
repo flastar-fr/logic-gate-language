@@ -18,11 +18,11 @@ int LogicGateLanguage::execute() {
         return 2;
     }
 
-    auto scanner = Scanner(program);
-    tokens = scanner.scan();
+    auto preprocessor = Preprocessor(program, program_file.parent_path());
+    const auto lines = preprocessor.preprocess();
 
-    auto preprocessor = Preprocessor(tokens);
-    tokens = preprocessor.preprocess();
+    auto scanner = Scanner(lines);
+    tokens = scanner.scan();
 
     create_graph();
 

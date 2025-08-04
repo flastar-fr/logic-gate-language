@@ -21,8 +21,7 @@ const std::unordered_map<std::string, TokenType> KEYCHARS = {
     {"|", TokenType::PIPE},
     {";", TokenType::SEMICOLON},
     {"->", TokenType::RIGHT_ARROW},
-    {"//", TokenType::DOUBLE_SLASH},
-    {"\n", TokenType::EOL}
+    {"//", TokenType::DOUBLE_SLASH}
 };
 
 const std::unordered_set<std::string> BOOLEAN_VALUES = {"true", "false", "1", "0"};
@@ -38,7 +37,6 @@ Scanner::Scanner(const std::vector<std::string>& program) : program(program) {}
 std::vector<Token> Scanner::scan() {
     for (const auto& line : program) {
         scan_line(line);
-        add_token(EOL_TOKEN);
         ++current_line;
     }
     return tokens;

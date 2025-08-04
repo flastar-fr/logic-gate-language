@@ -1,44 +1,27 @@
 #include "Preprocessor.hpp"
 
-Preprocessor::Preprocessor(const std::vector<Token>& tokens) : tokens(tokens) {}
+#include "language_processing/language_keywords_config.hpp"
+#include "utils/io_manipulation.hpp"
 
-std::vector<Token>& Preprocessor::preprocess() {
+Preprocessor::Preprocessor(const std::vector<std::string>& lines, std::filesystem::path include_path) : lines(lines),
+    include_path(std::move(include_path)) {}
+
+std::vector<std::string>& Preprocessor::preprocess() {
     remove_comments();
     process_includes();
-    remove_eols();
 
-    return tokens;
+    return lines;
 }
 
 void Preprocessor::remove_comments() {
-    std::vector<Token> new_tokens;
-    new_tokens.reserve(tokens.size());
-
-    bool is_comment = false;
-    for (const auto& token : tokens) {
-        if (token.type == TokenType::DOUBLE_SLASH) is_comment = true;
-
-        if (!is_comment) {
-            new_tokens.push_back(token);
+    for (auto& line : lines) {
+        const auto comment_index = line.find_first_of(COMMENT_PREFIX);
+        if (comment_index != std::string::npos) {
+            line = line.substr(0, comment_index);
         }
-
-        if (token.type == TokenType::EOL && is_comment) is_comment = false;
     }
-
-    tokens = new_tokens;
 }
 
 void Preprocessor::process_includes() {
-    // TODO :
-}
-
-void Preprocessor::remove_eols() {
-    std::vector<Token> new_tokens;
-    new_tokens.reserve(tokens.size());
-
-    for (const auto& token : tokens) {
-        if (token.type != TokenType::EOL) new_tokens.push_back(token);
-    }
-
-    tokens = new_tokens;
+    // TODO : to implement
 }

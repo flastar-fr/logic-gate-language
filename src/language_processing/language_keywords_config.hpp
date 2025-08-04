@@ -11,3 +11,5 @@ const std::string OUTPUT = "output";
 const std::string CIRCUIT = "circuit";
 const std::string TABLE = "table";
 const std::string WIRE = "wire";
+const std::string INCLUDE = "include";
+const std::string COMMENT_PREFIX = "//";
