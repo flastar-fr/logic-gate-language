@@ -283,7 +283,7 @@ uint32_t Parser::parse_table_content_long_truth_table(size_t& amount_bits, const
     size_t current_line = 0;
 
     do {
-        auto& [inputs, outputs] = parse_table_content_long_item();
+        auto [inputs, outputs] = parse_table_content_long_item();
         if (inputs != previous_inputs + 1)
             throw_invalid_argument_error("Incorrect order for truth table");
         ++previous_inputs;
