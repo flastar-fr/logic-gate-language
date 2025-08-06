@@ -60,8 +60,11 @@ void Scanner::scan_line(const std::string& line) {
 }
 
 void Scanner::check_token() {
-    if (!is_keychar(current_token) || are_double_quotes_open) return;
-    add_token(Token(KEYCHARS.at(current_token), current_line));
+    if (are_double_quotes_open) return;
+    if (BOOLEAN_VALUES.count(current_token))
+        add_token(Token(TokenType::BOOLEAN, current_token, current_line));
+    if (is_keychar(current_token))
+        add_token(Token(KEYCHARS.at(current_token), current_line));
 }
 
 void Scanner::check_literal() {
