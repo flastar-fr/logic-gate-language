@@ -52,9 +52,12 @@ public:
                                 std::unordered_map<std::string, Gate>::mapped_type& gate_ref);
     void declare_gate(const std::string& node_type_s);
     void declare_non_prerender_gate(Gate& gate);
+    void parse_read_inputs();
+    void parse_read_line();
     void add_input(const std::string& identifier);
     void add_output(const std::string& identifier);
     [[nodiscard]] Graph& get_graph() { return current_graph; }
+    [[nodiscard]] std::vector<size_t>& get_read_inputs() { return read_inputs; }
 
 private:
     std::vector<Token> tokens;
@@ -64,4 +67,5 @@ private:
     std::unordered_map<std::string, Gate> gates = DEFAULT_GATES;
     std::unordered_map<std::string, Gate> gates_identifier;
     std::unordered_map<std::string, size_t> nodes;
+    std::vector<size_t> read_inputs;
 };

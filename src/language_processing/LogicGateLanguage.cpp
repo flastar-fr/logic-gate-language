@@ -2,13 +2,12 @@
 
 #include <iostream>
 
-#include "data_structures/CSRGraph.hpp"
 #include "language_processing/parser/Parser.hpp"
 #include "language_processing/preprocessor/Preprocessor.hpp"
 #include "language_processing/scanner/Scanner.hpp"
 #include "utils/io_manipulation.hpp"
 
-LogicGateLanguage::LogicGateLanguage(const std::string& program_file) : program_file(program_file) {}
+LogicGateLanguage::LogicGateLanguage(const std::string& program_file) : program_file(program_file), graph_csr({}) {}
 
 int LogicGateLanguage::execute() {
     std::vector<std::string> program;
@@ -29,14 +28,24 @@ int LogicGateLanguage::execute() {
     return 0;
 }
 
-void LogicGateLanguage::create_graph() const {
+void LogicGateLanguage::create_graph() {
     auto parser = Parser(tokens);
     const auto graph = parser.parse();
     graph.print_graph();
+    graph_csr = CSRGraph(graph);
 
     std::cout << std::endl;
+    execute_cycle();
+
+    for (const auto input : parser.get_read_inputs()) {
+        graph_csr.set_inputs_with_value(input);
+        std::cout << std::endl;
+        execute_cycle();
+    }
+}
+
+void LogicGateLanguage::execute_cycle() {
     std::cout << "Execution:" << std::endl;
-    auto graph_csr = CSRGraph(graph);
     graph_csr.propagate();
     graph_csr.print_states();
 }

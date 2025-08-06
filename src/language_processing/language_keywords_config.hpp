@@ -2,8 +2,9 @@
 #include <string>
 
 const std::string MAIN = "main";
-const std::string PRERENDER = "prerender";
 const std::string GATE = "gate";
+const std::string READ = "read";
+const std::string PRERENDER = "prerender";
 const std::string INPUTS = "inputs";
 const std::string OUTPUTS = "outputs";
 const std::string INPUT = "input";

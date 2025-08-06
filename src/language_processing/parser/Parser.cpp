@@ -37,6 +37,9 @@ Graph Parser::parse() {
         if (is_identifier(tokens[token_index], GATE)) {
             parse_gate();
         }
+        if (is_identifier(tokens[token_index], READ)) {
+            parse_read_inputs();
+        }
     }
 
     return current_graph;
@@ -429,6 +432,26 @@ void Parser::declare_non_prerender_gate(Gate& gate) {
 
         current_graph.add_node(new_node);
     }
+}
+
+void Parser::parse_read_inputs() {
+    verify_token_identifier(tokens[token_index++], READ);
+    verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
+    for (; !is_node_type(tokens[token_index], TokenType::RIGHT_BRACE) && token_index < tokens.size(); ++token_index) {
+        parse_read_line();
+    }
+
+    verify_token_type(tokens[token_index], TokenType::RIGHT_BRACE);
+}
+
+void Parser::parse_read_line() {
+    size_t input_line = 0;
+    for (; !is_node_type(tokens[token_index], TokenType::SEMICOLON) && token_index < tokens.size(); ++token_index) {
+        verify_token_type(tokens[token_index], TokenType::BOOLEAN);
+        input_line <<= 1;
+        if (BOOLEAN_VALUES.at(tokens[token_index].value)) input_line |= 1;
+    }
+    read_inputs.push_back(input_line);
 }
 
 void Parser::add_input(const std::string& identifier) {
