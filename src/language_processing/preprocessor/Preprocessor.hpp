@@ -5,7 +5,8 @@
 
 class Preprocessor {
 public:
-    explicit Preprocessor(const std::vector<std::string>& lines, const std::filesystem::path& include_path, const std::filesystem::path& main_file);
+    explicit Preprocessor(const std::vector<std::string>& lines, const std::filesystem::path& include_path,
+                          const std::filesystem::path& main_file);
 
     std::vector<std::string>& preprocess();
     void remove_comments();

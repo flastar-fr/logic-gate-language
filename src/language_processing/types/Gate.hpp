@@ -8,7 +8,7 @@ struct Gate {
     Gate() = default;
 
     Gate(const std::unordered_map<std::string, size_t>& inputs, const std::unordered_map<std::string, size_t>& outputs,
-         const bool prerendered): inputs(inputs), outputs(outputs), prerendered(prerendered) {
+         const bool prerendered) : inputs(inputs), outputs(outputs), prerendered(prerendered) {
         for (const auto& [key, value] : inputs) {
             inputs_order.push_back(key);
         }

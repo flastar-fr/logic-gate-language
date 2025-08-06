@@ -9,7 +9,9 @@ struct Token {
     explicit Token(const TokenType type) : type(type) {}
     explicit Token(const TokenType type, std::string value) : type(type), value(std::move(value)) {}
     explicit Token(const TokenType type, const size_t line) : type(type), line(line) {}
-    explicit Token(const TokenType type, std::string value, const size_t line) : type(type), value(std::move(value)), line(line) {}
+
+    explicit Token(const TokenType type, std::string value, const size_t line) : type(type), value(std::move(value)),
+        line(line) {}
 
     TokenType type;
     std::string value;

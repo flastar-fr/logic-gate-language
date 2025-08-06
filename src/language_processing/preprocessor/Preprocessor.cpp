@@ -21,7 +21,7 @@ std::string extract_file_name(const std::string& line) {
 
 Preprocessor::Preprocessor(const std::vector<std::string>& lines, const std::filesystem::path& include_path,
                            const std::filesystem::path& main_file) : lines(lines), include_path(include_path),
-                                                              main_file(main_file) {
+                                                                     main_file(main_file) {
     included_files.insert(include_path / main_file);
 }
 
@@ -57,7 +57,8 @@ void Preprocessor::process_includes() {
                 if (process_include(line, new_lines)) {
                     has_include = true;
                 }
-            } else {
+            }
+            else {
                 new_lines.push_back(line);
             }
         }
