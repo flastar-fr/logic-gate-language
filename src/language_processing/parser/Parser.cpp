@@ -437,6 +437,13 @@ void Parser::declare_non_prerender_gate(Gate& gate) {
 void Parser::parse_read_inputs() {
     verify_token_identifier(tokens[token_index++], READ);
     verify_token_type(tokens[token_index++], TokenType::LEFT_BRACE);
+
+    if (is_identifier(tokens[token_index], LOOP)) {
+        is_infinite_loop = true;
+        verify_token_type(tokens[++token_index], TokenType::RIGHT_BRACE);
+        return;
+    }
+
     for (; !is_node_type(tokens[token_index], TokenType::RIGHT_BRACE) && token_index < tokens.size(); ++token_index) {
         parse_read_line();
     }

@@ -14,4 +14,5 @@ const std::string TABLE = "table";
 const std::string WIRE = "wire";
 const std::string INCLUDE = "include";
 const std::string COMMENT_PREFIX = "//";
+const std::string LOOP = "loop";
 constexpr char PREPROCESSOR_CHAR = '#';

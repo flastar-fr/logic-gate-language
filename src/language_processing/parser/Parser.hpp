@@ -58,7 +58,8 @@ public:
     void add_input(const std::string& identifier);
     void add_output(const std::string& identifier);
     [[nodiscard]] Graph& get_graph() { return current_graph; }
-    [[nodiscard]] std::vector<size_t>& get_read_inputs() { return read_inputs; }
+    [[nodiscard]] const std::vector<size_t>& get_read_inputs() const { return read_inputs; }
+    [[nodiscard]] bool get_is_infinite_loop() const { return is_infinite_loop; }
 
 private:
     std::vector<Token> tokens;
@@ -69,4 +70,5 @@ private:
     std::unordered_map<std::string, Gate> gates_identifier;
     std::unordered_map<std::string, size_t> nodes;
     std::vector<size_t> read_inputs;
+    bool is_infinite_loop = false;
 };

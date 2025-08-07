@@ -45,6 +45,23 @@ void LogicGateLanguage::create_graph() {
     std::cout << std::endl;
     execute_cycle();
 
+    if (parser.get_is_infinite_loop() && parser.get_read_inputs().empty()) {
+        execute_infinitly(parser);
+        return;
+    }
+
+    execute_inputs(parser);
+}
+
+void LogicGateLanguage::execute_infinitly(const Parser& parser) {
+    while (parser.get_is_infinite_loop()) {
+        std::cout << std::endl;
+        execute_cycle();
+        if (!output_file.empty()) register_output();
+    }
+}
+
+void LogicGateLanguage::execute_inputs(const Parser& parser) {
     for (const auto input : parser.get_read_inputs()) {
         graph_csr.set_inputs_with_value(input);
         std::cout << std::endl;

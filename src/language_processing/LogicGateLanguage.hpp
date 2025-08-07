@@ -4,6 +4,7 @@
 
 #include "data_structures/CSRGraph.hpp"
 #include "language_processing/types/Token.hpp"
+#include "parser/Parser.hpp"
 
 class LogicGateLanguage {
 public:
@@ -13,6 +14,8 @@ public:
 
     int execute();
     void create_graph();
+    void execute_infinitly(const Parser& parser);
+    void execute_inputs(const Parser& parser);
     void execute_cycle();
     void register_output();
 
