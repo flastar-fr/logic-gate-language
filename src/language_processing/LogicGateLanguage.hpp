@@ -7,14 +7,18 @@
 
 class LogicGateLanguage {
 public:
-    explicit LogicGateLanguage(const std::string& program_file);
+    LogicGateLanguage();
+    explicit LogicGateLanguage(std::filesystem::path program_file);
+    explicit LogicGateLanguage(std::filesystem::path program_file, std::filesystem::path output_file);
 
     int execute();
     void create_graph();
     void execute_cycle();
+    void register_output();
 
 private:
     std::filesystem::path program_file;
+    std::filesystem::path output_file;
     std::vector<Token> tokens;
     CSRGraph graph_csr;
 };
