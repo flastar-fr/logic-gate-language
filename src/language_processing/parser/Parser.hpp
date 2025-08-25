@@ -24,7 +24,8 @@ const std::unordered_map<std::string, bool> BOOLEAN_VALUES = {
 class Parser {
 public:
     explicit Parser(const std::vector<Token>& tokens);
-    explicit Parser(const std::vector<Token>& tokens, std::unordered_map<std::string, size_t> nodes, const std::unordered_map<std::string, Gate>& gates);
+    explicit Parser(const std::vector<Token>& tokens, std::unordered_map<std::string, size_t> nodes,
+                    const std::unordered_map<std::string, Gate>& gates);
 
     Graph parse();
     void parse_main();

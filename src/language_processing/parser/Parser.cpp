@@ -30,7 +30,8 @@ void register_io(Gate& gate, Node& node, size_t& current_input, size_t& current_
 Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens), current_graph({}) {}
 
 Parser::Parser(const std::vector<Token>& tokens, std::unordered_map<std::string, size_t> nodes,
-    const std::unordered_map<std::string, Gate>& gates) : tokens(tokens), gates(gates), nodes(std::move(nodes)) {}
+               const std::unordered_map<std::string, Gate>& gates) : tokens(tokens), gates(gates),
+                                                                     nodes(std::move(nodes)) {}
 
 Graph Parser::parse() {
     for (; token_index < tokens.size(); ++token_index) {
