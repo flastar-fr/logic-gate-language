@@ -29,6 +29,9 @@ void register_io(Gate& gate, Node& node, size_t& current_input, size_t& current_
 
 Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens), current_graph({}) {}
 
+Parser::Parser(const std::vector<Token>& tokens, std::unordered_map<std::string, size_t> nodes,
+    const std::unordered_map<std::string, Gate>& gates) : tokens(tokens), gates(gates), nodes(std::move(nodes)) {}
+
 Graph Parser::parse() {
     for (; token_index < tokens.size(); ++token_index) {
         if (is_identifier(tokens[token_index], MAIN)) {
@@ -148,6 +151,13 @@ Node& Parser::parse_identifier() {
         return parse_identifier_gate();
     }
     const auto identifier = tokens[token_index++].value;
+    for (const auto& [fst, snd] : nodes) {
+        if (identifier != "xor") continue;
+        std::cout << fst << std::endl;
+    }
+    if (nodes.count(identifier) == 0) {
+        throw_invalid_argument_error("Identifier " + identifier + " does not exist");
+    }
     const auto node_index = nodes.at(identifier);
     Node& node = current_graph[node_index];
 
@@ -342,7 +352,8 @@ Graph Parser::parse_gate_graph(const std::vector<std::string>& inputs, const std
 
     verify_token_type(tokens[token_index], TokenType::LEFT_BRACE);
     const std::vector<Token> circuit_tokens = extract_block();
-    auto parser = Parser(circuit_tokens);
+    // TODO : add copy of gates identifiers
+    auto parser = Parser(circuit_tokens, nodes, gates);
     for (const auto& input : inputs) {
         parser.add_input(input);
     }
