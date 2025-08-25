@@ -352,7 +352,6 @@ Graph Parser::parse_gate_graph(const std::vector<std::string>& inputs, const std
 
     verify_token_type(tokens[token_index], TokenType::LEFT_BRACE);
     const std::vector<Token> circuit_tokens = extract_block();
-    // TODO : add copy of gates identifiers
     auto parser = Parser(circuit_tokens, nodes, gates);
     for (const auto& input : inputs) {
         parser.add_input(input);
