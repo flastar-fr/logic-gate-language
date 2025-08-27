@@ -411,13 +411,13 @@ void Parser::declare_prerender_gate(const Gate& gate, Gate& gate_ref) {
 
     current_graph.resize(current_graph.get_nodes().size() + gate.inputs.size() + gate.outputs.size());
     const Node& node_gate_ref = current_graph[current_node_id - 1];
-    for (auto& [key, value] : gate_ref.inputs) {
-        value = current_node_id;
+    for (const auto& input_name : gate_ref.inputs_order) {
+        gate_ref.inputs[input_name] = current_node_id;
         const auto node_input = Node(current_node_id++, NodeType::WIRE);
         current_graph.add_edge(node_input, node_gate_ref);
     }
-    for (auto& [key, value] : gate_ref.outputs) {
-        value = current_node_id;
+    for (const auto& output_name : gate_ref.outputs_order) {
+        gate_ref.outputs[output_name] = current_node_id;
         const auto node_output = Node(current_node_id++, NodeType::GATE_OUTPUT);
         current_graph.add_edge(node_gate_ref, node_output);
     }
