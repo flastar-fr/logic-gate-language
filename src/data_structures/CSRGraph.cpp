@@ -1,6 +1,7 @@
 #include "CSRGraph.hpp"
 
 #include <algorithm>
+#include <bitset>
 #include <iostream>
 #include <queue>
 #include <stack>
@@ -86,10 +87,11 @@ void CSRGraph::execute_wire_propagation(CSRNode& node, const NeighborRange<size_
 
 void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const NeighborRange<size_t> predecessors,
                                                     const NeighborRange<size_t> neighbors) {
-    if (node.gate_data.amount_outputs != neighbors.end() - neighbors.begin()) {
+    const auto real_amount_of_outputs = neighbors.end() - neighbors.begin();
+    if (node.gate_data.amount_outputs != real_amount_of_outputs) {
         const std::string error_message = "Invalid amount of outputs. Expected " + std::to_string(
                 node.gate_data.amount_outputs) + ", got " +
-            std::to_string(neighbors.end() - neighbors.begin());
+            std::to_string(real_amount_of_outputs);
         throw_invalid_argument_error(error_message);
     }
 
@@ -102,8 +104,8 @@ void CSRGraph::execute_gate_prerendered_propagation(const CSRNode& node, const N
         ++shift;
     }
 
-    const auto amount_bits_per_result = (predecessors.end() - predecessors.begin()) * (predecessors.end() - predecessors
-        .begin());
+    const auto real_amount_of_inputs = predecessors.end() - predecessors.begin();
+    const auto amount_bits_per_result = static_cast<int>(std::pow(2, real_amount_of_inputs));
     for (const auto i_neighbor : neighbors) {
         auto& neighbor = csr_nodes[i_neighbor];
         if (neighbor.node_type != NodeType::GATE_OUTPUT) {
@@ -204,7 +206,7 @@ GateData CSRGraph::determine_graph_gate_data() noexcept {
     const auto amount_outputs = outputs.size();
     uint32_t truth_table = 0;
 
-    const auto amount_bits = amount_inputs * amount_inputs;
+    const auto amount_bits = static_cast<int>(std::pow(2, amount_inputs));
     for (int current_bit = 0; current_bit < amount_bits; ++current_bit) {
         set_inputs_with_value(current_bit);
         propagate();

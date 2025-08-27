@@ -7,8 +7,7 @@ TEST(ScannerTest, IncludeDefinition) {
     const std::vector expected_tokens = {
         Token(TokenType::HASHTAG),
         Token(TokenType::IDENTIFIER, "include"),
-        Token(TokenType::STRING, "xor.lg"),
-        Token(TokenType::EOL)
+        Token(TokenType::STRING, "xor.lg")
     };
     const std::string string_to_test = "#include \"xor.lg\"";
 
@@ -22,8 +21,7 @@ TEST(ScannerTest, IdentifiersSeparatedByKeycharAndSpace) {
     const std::vector expected_tokens = {
         Token(TokenType::IDENTIFIER, "op1"),
         Token(TokenType::COMMA),
-        Token(TokenType::IDENTIFIER, "op2"),
-        Token(TokenType::EOL)
+        Token(TokenType::IDENTIFIER, "op2")
     };
     const std::string string_to_test = "op1, op2";
 
@@ -37,8 +35,7 @@ TEST(ScannerTest, IdentifiersSeparatedByKeychar) {
     const std::vector expected_tokens = {
         Token(TokenType::IDENTIFIER, "b"),
         Token(TokenType::DOT),
-        Token(TokenType::IDENTIFIER, "out"),
-        Token(TokenType::EOL)
+        Token(TokenType::IDENTIFIER, "out")
     };
     const std::string string_to_test = "b.out";
 
@@ -54,8 +51,7 @@ TEST(ScannerTest, ComplexeIdentifiersMixedKeychars) {
         Token(TokenType::COLON),
         Token(TokenType::IDENTIFIER, "op1"),
         Token(TokenType::COMMA),
-        Token(TokenType::IDENTIFIER, "op2"),
-        Token(TokenType::EOL)
+        Token(TokenType::IDENTIFIER, "op2")
     };
     const std::string string_to_test = "input : op1, op2";
 
@@ -77,8 +73,7 @@ TEST(ScannerTest, ComplexeBooleansMixedKeychars) {
         Token(TokenType::BOOLEAN, "1"),
         Token(TokenType::COMMA),
         Token(TokenType::BOOLEAN, "true"),
-        Token(TokenType::RIGHT_PAREN),
-        Token(TokenType::EOL)
+        Token(TokenType::RIGHT_PAREN)
     };
     const std::string string_to_test = "(1, 1, false | 1, true)";
 
@@ -92,8 +87,7 @@ TEST(ScannerTest, StructDefinition) {
     const std::vector expected_tokens = {
         Token(TokenType::IDENTIFIER, "struct"),
         Token(TokenType::IDENTIFIER, "or"),
-        Token(TokenType::LEFT_BRACE),
-        Token(TokenType::EOL)
+        Token(TokenType::LEFT_BRACE)
     };
     const std::string string_to_test = "struct or {";
 

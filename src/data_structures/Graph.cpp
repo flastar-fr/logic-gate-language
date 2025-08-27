@@ -17,8 +17,12 @@ void Graph::add_node(const Node& node) {
     nodes[node.index].node_type = node.node_type;
     nodes[node.index].state = node.state;
     nodes[node.index].gate_data = node.gate_data;
-    nodes[node.index].neighbors = node.neighbors;
-    nodes[node.index].predecessors = node.predecessors;
+    for (const auto neighbor : node.neighbors) {
+        add_neighbor(neighbor, nodes[node.index]);
+    }
+    for (const auto predecessor : node.predecessors) {
+        add_predecessor(predecessor, nodes[node.index]);
+    }
 }
 
 void Graph::add_edge(const Node& from, const Node& to) {

@@ -21,6 +21,24 @@ struct Node {
     GateData gate_data{};
 };
 
+inline void add_neighbor(size_t neighbor_to_add, Node& node) {
+    size_t i = 0;
+    while (i < node.neighbors.size()) {
+        if (node.neighbors[i] == neighbor_to_add) return;
+        ++i;
+    }
+    node.neighbors.emplace_back(neighbor_to_add);
+}
+
+inline void add_predecessor(size_t predecessor_to_add, Node& node) {
+    size_t i = 0;
+    while (i < node.predecessors.size()) {
+        if (node.predecessors[i] == predecessor_to_add) return;
+        ++i;
+    }
+    node.predecessors.emplace_back(predecessor_to_add);
+}
+
 inline std::ostream& operator<<(std::ostream& lhs, const Node& rhs) {
     lhs << "Node " << rhs.index << ": ";
     lhs << "Neighbors: { ";

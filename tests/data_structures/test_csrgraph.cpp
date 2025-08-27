@@ -3,7 +3,7 @@
 
 #include "data_structures/CSRGraph.hpp"
 
-CSRGraph construct_gate_from_truth_table(uint32_t truth_table) {
+CSRGraph construct_gate_2i_2o_from_truth_table(uint32_t truth_table) {
     auto node0 = Node(0, NodeType::INPUT);
     node0.state = true;
     auto node1 = Node(1, NodeType::INPUT);
@@ -21,6 +21,37 @@ CSRGraph construct_gate_from_truth_table(uint32_t truth_table) {
     graph.add_edge(node2, node4);
     graph.add_edge(node3, node5);
     graph.add_edge(node4, node6);
+
+    auto graph_csr = CSRGraph(graph);
+
+    return graph_csr;
+}
+
+CSRGraph construct_gate_3i_2o_from_truth_table(uint32_t truth_table) {
+    auto node0 = Node(0, NodeType::INPUT);
+    node0.state = true;
+    auto node1 = Node(1, NodeType::INPUT);
+    node1.state = true;
+    auto node2 = Node(2, NodeType::INPUT);
+    node2.state = true;
+    auto node3 = Node(3, NodeType::GATE);
+    node3.gate_data = GateData(truth_table, 2, GateRenderType::PRERENDERED);
+
+    auto node4 = Node(4, NodeType::GATE_OUTPUT);
+    auto node5 = Node(5, NodeType::GATE_OUTPUT);
+
+    auto node6 = Node(6, NodeType::OUTPUT);
+    auto node7 = Node(7, NodeType::OUTPUT);
+
+    auto graph = Graph(8);
+
+    graph.add_edge(node0, node3);
+    graph.add_edge(node1, node3);
+    graph.add_edge(node2, node3);
+    graph.add_edge(node3, node4);
+    graph.add_edge(node3, node5);
+    graph.add_edge(node4, node6);
+    graph.add_edge(node5, node7);
 
     auto graph_csr = CSRGraph(graph);
 
@@ -80,7 +111,7 @@ TEST(CSRGraphTest, ExecuteGatePrerenderedPropagation2Outputs) {
 
 TEST(CSRGraphTest, DetermineGraphGateDataNormalValue) {
     constexpr uint32_t test_truth_table = 0b1000'0001;
-    auto graph_csr = construct_gate_from_truth_table(test_truth_table);
+    auto graph_csr = construct_gate_2i_2o_from_truth_table(test_truth_table);
 
     const auto gate_data = graph_csr.determine_graph_gate_data();
 
@@ -89,7 +120,16 @@ TEST(CSRGraphTest, DetermineGraphGateDataNormalValue) {
 
 TEST(CSRGraphTest, DetermineGraphGateDataNormalValue2) {
     constexpr uint32_t test_truth_table = 0b0010'1001;
-    auto graph_csr = construct_gate_from_truth_table(test_truth_table);
+    auto graph_csr = construct_gate_2i_2o_from_truth_table(test_truth_table);
+
+    const auto gate_data = graph_csr.determine_graph_gate_data();
+
+    EXPECT_EQ(test_truth_table, gate_data.truth_table);
+}
+
+TEST(CSRGraphTest, DetermineGraphGateDataNormalValue4) {
+    constexpr uint32_t test_truth_table = 0b11101000'10010110;
+    auto graph_csr = construct_gate_3i_2o_from_truth_table(test_truth_table);
 
     const auto gate_data = graph_csr.determine_graph_gate_data();
 
