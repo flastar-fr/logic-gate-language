@@ -231,17 +231,17 @@ Gate Parser::parse_gate_content(const bool is_prerendered, const std::vector<std
                                 const std::vector<std::string>& outputs) {
     if (is_identifier(tokens[token_index], TABLE)) {
         const auto table = parse_table(inputs, outputs);
-        return {inputs, outputs, table, true};
+        return {inputs, outputs, table, is_prerendered};
     }
     if (is_identifier(tokens[token_index], CIRCUIT) && is_prerendered) {
         const auto graph = parse_gate_graph(inputs, outputs);
         auto graph_csr = CSRGraph(graph);
         const auto table = graph_csr.determine_graph_gate_data();
-        return {inputs, outputs, table.truth_table, true};
+        return {inputs, outputs, table.truth_table, is_prerendered};
     }
     if (is_identifier(tokens[token_index], CIRCUIT) && !is_prerendered) {
         const auto graph = parse_gate_graph(inputs, outputs);
-        return {inputs, outputs, graph, false};
+        return {inputs, outputs, graph, is_prerendered};
     }
 
     throw_invalid_argument_error(
