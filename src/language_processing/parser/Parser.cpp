@@ -273,7 +273,7 @@ uint32_t Parser::parse_table_content(size_t& amount_bits, const size_t amount_in
         case TokenType::LEFT_PAREN: return parse_table_content_long(amount_bits, amount_inputs, amount_outputs);
         default: throw_invalid_argument_error("Invalid token type " + tostring(tokens[token_index].type));
     }
-    return -1; // prevent IDE warning for a branch without return
+    return -1; // prevent IDE warning for a branch without a return
 }
 
 uint32_t Parser::parse_table_content_short(size_t& amount_bits) {
