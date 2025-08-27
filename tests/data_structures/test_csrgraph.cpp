@@ -1,4 +1,3 @@
-#include <bitset>
 #include <gtest/gtest.h>
 
 #include "data_structures/CSRGraph.hpp"

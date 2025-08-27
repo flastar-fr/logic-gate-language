@@ -1,7 +1,6 @@
 #include "CSRGraph.hpp"
 
 #include <algorithm>
-#include <bitset>
 #include <iostream>
 #include <queue>
 #include <stack>
